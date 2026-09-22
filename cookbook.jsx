@@ -3535,7 +3535,7 @@ function RecipeCard({ recipe, onClick }) {
   );
 }
 
-export default function CookbookApp() {
+function CookbookApp() {
   const [recipes, setRecipes] = useState(DEFAULT_RECIPES);
   const [selectedId, setSelectedId] = useState(null);
   const [search, setSearch] = useState("");
