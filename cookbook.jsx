@@ -1,0 +1,3656 @@
+import { useState, useEffect } from "react";
+
+const DEFAULT_RECIPES = [
+{
+    id: "ajwain-water",
+    category: "drinks",
+    timing: "with-meals",
+    title: "Ajwain (Carom) Water",
+    description: "The rescue remedy — instant relief for gas, bloating, acidity, indigestion.",
+    baseServings: 1, calories: "~4 cal/serving", totalTime: 5,
+    macros: { protein: "0.1g", carbs: "0.7g", fat: "0.1g" }, microHighlights: [],
+    tags: ["with-meals", "anytime", "vata-balancing", "warming", "rescue"],
+    ingredients: [
+      { name: "Ajwain (carom seeds)", amount: 0.5, unit: "tsp" },
+      { name: "Water", amount: 1, unit: "cup" }
+    ],
+    steps: [
+      { title: "Boil", content: "Boil ajwain in water for 3-5 minutes. Strain and drink warm.", timerSeconds: 300 }
+    ],
+    notes: [
+      { label: "Rescue use", text: "Feeling bloated after a heavy meal? Ajwain water works in 15-20 minutes. Keep seeds in your kitchen for emergencies." },
+      { label: "Thymol", text: "Ajwain contains thymol — a natural antispasmodic. That's why it relieves gas and cramps so fast." }
+    ],
+  },
+{
+    id: "ccf-tea",
+    category: "drinks",
+    timing: "morning",
+    title: "CCF Tea (Cumin-Coriander-Fennel)",
+    description: "The Ayurvedic trifecta — balances all three doshas. The most universally recommended drink.",
+    baseServings: 1, calories: "~10 cal/serving", totalTime: 10,
+    macros: { protein: "0.4g", carbs: "1.7g", fat: "0.2g" }, microHighlights: [],
+    tags: ["morning", "tridoshic", "balanced", "digestion"],
+    ingredients: [
+      { name: "Cumin seeds", amount: 0.5, unit: "tsp" },
+      { name: "Coriander seeds", amount: 0.5, unit: "tsp" },
+      { name: "Fennel seeds", amount: 0.5, unit: "tsp" },
+      { name: "Water", amount: 1.5, unit: "cup" }
+    ],
+    steps: [
+      { title: "Boil", content: "Add all seeds to water. Bring to a boil, simmer 5-7 minutes.", timerSeconds: 420 },
+      { title: "Strain and drink", content: "Strain and drink warm.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Tridoshic", text: "Cumin = warming (Kapha/Vata), Coriander = cooling (Pitta), Fennel = sweet/cooling (Pitta/Vata). Together they balance all three." },
+      { label: "Best for", text: "General digestion, seasonal transitions, or when you're not sure what your body needs." }
+    ],
+  },
+{
+    id: "dhaniya-water",
+    category: "drinks",
+    timing: "anytime",
+    title: "Dhaniya (Coriander) Water",
+    description: "The coolest of all — UTI relief, kidney support, pitta-dominant types.",
+    baseServings: 1, calories: "~17 cal/serving", totalTime: 5,
+    macros: { protein: "0.6g", carbs: "2.8g", fat: "0.4g" }, microHighlights: [],
+    tags: ["anytime", "pitta-balancing", "cooling", "detox"],
+    ingredients: [
+      { name: "Coriander seeds (dhaniya)", amount: 1, unit: "tbsp" },
+      { name: "Water", amount: 1.5, unit: "cup" }
+    ],
+    steps: [
+      { title: "Soak or boil", content: "Option A: Soak coriander seeds overnight, strain and drink morning. Option B: Boil seeds in water 5 min, strain and drink.", timerSeconds: 300 }
+    ],
+    notes: [
+      { label: "Cooling", text: "The most cooling seed water. For pitta-dominant types (acidity, burning, heat, irritability) this is your go-to." },
+      { label: "UTI/kidney", text: "Traditional use for mild urinary burning. Not a substitute for medical treatment, but supportive." }
+    ],
+  },
+{
+    id: "jeera-water",
+    category: "drinks",
+    timing: "morning",
+    title: "Jeera (Cumin) Water",
+    description: "Digestive powerhouse — reduces bloating, gas, and water retention. Kapha-balancing.",
+    baseServings: 1, calories: "~8 cal/serving", totalTime: 10,
+    macros: { protein: "0.3g", carbs: "1.3g", fat: "0.2g" }, microHighlights: [],
+    tags: ["morning", "kapha-balancing", "digestion", "warming"],
+    ingredients: [
+      { name: "Cumin seeds (jeera)", amount: 1, unit: "tsp" },
+      { name: "Water", amount: 1.5, unit: "cup" }
+    ],
+    steps: [
+      { title: "Boil", content: "Add cumin seeds to water. Bring to a rolling boil, then simmer 5 minutes until water turns golden-brown.", timerSeconds: 300 },
+      { title: "Strain and drink", content: "Strain into a cup. Drink warm on an empty stomach.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Kapha balancing", text: "Warming, drying, light — perfect for Kapha types or anyone feeling sluggish, heavy, or bloated." },
+      { label: "Schedule", text: "Rotate with methi water. Try MWF jeera, TTS methi, or alternate weeks." }
+    ],
+  },
+{
+    id: "methi-water",
+    category: "drinks",
+    timing: "morning",
+    title: "Methi (Fenugreek) Water",
+    description: "Soaked overnight — bitter but powerful. Blood sugar regulation, digestion, inflammation.",
+    baseServings: 1, calories: "~12 cal/serving", totalTime: 5,
+    macros: { protein: "0.4g", carbs: "2.0g", fat: "0.3g" }, microHighlights: [],
+    tags: ["morning", "kapha-balancing", "blood-sugar", "warming"],
+    ingredients: [
+      { name: "Fenugreek seeds (methi dana)", amount: 1, unit: "tsp" },
+      { name: "Water", amount: 1, unit: "cup" }
+    ],
+    steps: [
+      { title: "Soak overnight", content: "Add methi seeds to water. Soak overnight (8+ hours).", timerSeconds: null },
+      { title: "Drink in morning", content: "Drink the water AND eat the softened seeds on an empty stomach.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Bitter taste", text: "Yes it's bitter. That's the point — bitter taste stimulates liver and digestive enzymes. Don't add sweetener." },
+      { label: "Blood sugar", text: "Fenugreek slows carb absorption. Studied for Type 2 diabetes support. Consistent daily use matters more than dose." }
+    ],
+  },
+{
+    id: "rose-water-gulkand",
+    category: "drinks",
+    timing: "anytime",
+    title: "Rose Water / Gulkand Drink",
+    description: "Cooling and Pitta-balancing — rose water without sugar, or gulkand sparingly.",
+    baseServings: 1, calories: "~11 cal/serving", totalTime: 2,
+    macros: { protein: "0.0g", carbs: "2.7g", fat: "0.0g" }, microHighlights: [],
+    variations: [
+      { label: "Rose Water", calories: "~1 cal", macros: { protein: "0.0g", carbs: "0.2g", fat: "0.0g" }, microHighlights: [] },
+      { label: "Gulkand", calories: "~10 cal", macros: { protein: "0.0g", carbs: "2.5g", fat: "0.0g" }, microHighlights: [] }
+    ],
+    tags: ["anytime", "pitta-balancing", "cooling", "summer"],
+    ingredients: [
+      { name: "Warm water", amount: 1, unit: "cup" },
+      { name: "Pure rose water", amount: 1, unit: "tsp" },
+      { name: "Gulkand (optional)", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Simple rose water", content: "Add 1 tsp pure rose water to warm water. Cooling and Pitta-balancing without any sugar.", timerSeconds: null },
+      { title: "Gulkand option", content: "Dissolve ½ tsp gulkand in warm water and drink in the morning. Use sparingly — gulkand has a lot of sugar.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Rose water vs gulkand", text: "Pure rose water is the better daily option — no sugar, just cooling. Gulkand is more potent medicinally but comes with sugar. Max ½ tsp gulkand, not daily." },
+      { label: "When to use", text: "Seasonal — especially May through September. Good for acidity, heartburn, stress-induced heat, burning palms/soles/eyes." }
+    ],
+  },
+{
+    id: "saunf-water",
+    category: "drinks",
+    timing: "with-meals",
+    title: "Saunf (Fennel) Water",
+    description: "Cooling, sweet, gentle — the after-meal digestive. Pitta-balancing.",
+    baseServings: 1, calories: "~7 cal/serving", totalTime: 5,
+    macros: { protein: "0.3g", carbs: "1.1g", fat: "0.2g" }, microHighlights: [],
+    tags: ["with-meals", "pitta-balancing", "cooling", "gentle"],
+    ingredients: [
+      { name: "Fennel seeds (saunf)", amount: 1, unit: "tsp" },
+      { name: "Water", amount: 1, unit: "cup" }
+    ],
+    steps: [
+      { title: "Steep", content: "Lightly crush fennel seeds. Add to hot water and steep 5 minutes. Strain and drink after meals.", timerSeconds: 300 }
+    ],
+    notes: [
+      { label: "After meals", text: "Saunf is the classic Indian after-meal digestive for a reason — it's cooling, so it won't aggravate pitta like ajwain might." },
+      { label: "Pitta-balancing", text: "Sweet + cooling. Perfect in summer or after spicy food. Also freshens breath." }
+    ],
+  },
+{
+    id: "triphala-nutmeg",
+    category: "drinks",
+    timing: "bedtime",
+    title: "Triphala + Nutmeg Bedtime Drink",
+    description: "Gentle detox + sleep aid. Triphala cleanses the GI tract overnight, nutmeg promotes deep sleep.",
+    baseServings: 1, calories: "~178 cal/serving", totalTime: 5,
+    macros: { protein: "8.1g", carbs: "20.4g", fat: "7.0g" }, microHighlights: ["Calcium"],
+    tags: ["bedtime", "tridoshic", "detox", "sleep"],
+    ingredients: [
+      { name: "Triphala powder", amount: 0.5, unit: "tsp" },
+      { name: "Nutmeg (freshly grated)", amount: 1, unit: "pinch" },
+      { name: "Warm water or warm milk", amount: 1, unit: "cup" },
+      { name: "Honey (optional, add after cooling slightly)", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Mix and drink", content: "Mix triphala powder and nutmeg into warm water or milk. If using honey, wait until drinkable temperature (honey should never be heated). Drink 30-60 min before bed.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Triphala", text: "Three fruits: Amalaki, Bibhitaki, Haritaki. Gentle laxative + antioxidant. Works best with consistent daily use, not as a one-off." },
+      { label: "Nutmeg for sleep", text: "Nutmeg (jaiphal) is a natural sedative in small doses. A pinch is enough. Too much causes nausea." },
+      { label: "Honey rule", text: "Never heat honey above 40°C — Ayurveda says heated honey creates ama. Add after cooling to drinkable temp." }
+    ],
+  },
+{
+    id: "ushna-jala",
+    category: "drinks",
+    timing: "with-meals",
+    title: "Ushna Jala (Plain Hot Water)",
+    description: "The simplest Ayurvedic practice — sipping hot water throughout the day dissolves ama (toxins).",
+    baseServings: 1, calories: "~0 cal/serving", totalTime: 2,
+    macros: { protein: "0.0g", carbs: "0.0g", fat: "0.0g" }, microHighlights: [],
+    tags: ["with-meals", "anytime", "tridoshic", "balanced"],
+    ingredients: [
+      { name: "Water (boiled)", amount: 1, unit: "cup" }
+    ],
+    steps: [
+      { title: "Boil and sip", content: "Boil water, pour into a thermos or cup. Sip throughout the day, especially with meals. Not room temp — keep it hot.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Why hot?", text: "In Ayurveda, hot water kindles agni (digestive fire) and dissolves accumulated ama. Cold water douses agni." },
+      { label: "With meals", text: "Sip hot water during meals instead of cold water. This alone can improve digestion significantly." }
+    ],
+  },
+{
+    id: "warm-lemon-water",
+    category: "drinks",
+    timing: "morning",
+    title: "Warm Lemon Water",
+    description: "The simplest morning ritual — warm water + fresh lemon. Alkalizing, hydrating, digestive.",
+    baseServings: 1, calories: "~12 cal/serving", totalTime: 3,
+    macros: { protein: "0.1g", carbs: "3.0g", fat: "0.0g" }, microHighlights: ["Vitamin C"],
+    tags: ["morning", "pitta-balancing", "hydrating", "alkalizing"],
+    ingredients: [
+      { name: "Warm water", amount: 1, unit: "cup" },
+      { name: "Fresh lemon juice", amount: 0.5, unit: "pcs" },
+      { name: "Honey (optional)", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Prep", content: "Heat water to warm (not boiling). Squeeze half a lemon. Add honey if desired. Drink first thing on an empty stomach.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Why warm?", text: "Hot water destroys vitamin C. Warm is perfect — aids digestion without killing nutrients." },
+      { label: "Protocol", text: "Drink this FIRST every morning, 15-20 min before any food. Then rotate seed waters." }
+    ],
+  },
+{
+    id: "meal-broccoli-cheddar-rice-cups",
+    category: "meals",
+    title: "Broccoli Cheddar Rice Cups (Toddler-Friendly)",
+    description: "Cheesy, veggie-packed rice cups that are soft, delicious, and easy to hold. A balanced bite with veggies, whole grains, and cheese.",
+    baseServings: 2, calories: "~237 cal/cup", totalTime: 30,
+    macros: { protein: "11.1g", carbs: "29.1g", fat: "8.5g" }, microHighlights: ["Calcium", "Vitamin C", "Fiber", "Protein"],
+    tags: ["toddler", "rice", "cheese", "kid-friendly", "meal-prep", "freezer-friendly"],
+    ingredients: [
+      { name: "Cooked rice", amount: 1, unit: "cup" },
+      { name: "Broccoli (finely chopped)", amount: 0.5, unit: "cup" },
+      { name: "Shredded cheddar cheese", amount: 0.25, unit: "cup" },
+      { name: "Egg", amount: 1, unit: "pcs" },
+      { name: "Milk", amount: 2, unit: "tbsp" },
+      { name: "Breadcrumbs", amount: 2, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Mix", content: "Combine cooked rice, chopped broccoli, cheddar, egg, milk, and breadcrumbs in a bowl until well combined.", timerSeconds: null },
+      { title: "Fill cups", content: "Grease a mini muffin tin. Press mixture firmly into each cup.", timerSeconds: null },
+      { title: "Bake", content: "Bake at 375°F for 18-20 min until golden and set.", timerSeconds: 1200 },
+      { title: "Cool and serve", content: "Let cool 5 min before removing — they firm up as they cool.", timerSeconds: 300 }
+    ],
+    notes: [
+      { label: "Mom tip", text: "Make a double batch and freeze some for busy days. They reheat beautifully — just microwave 30-45 sec or toaster oven 5 min from frozen." }
+    ],
+  },
+{
+    id: "curry-butter-chicken",
+    category: "meals",
+    title: "Butter Chicken Curry (Full Dish)",
+    description: "The restaurant classic, made from scratch — tomato-cashew base finished with butter and cream. Different from the Butter Chicken marinade — this is the complete cooked curry.",
+    baseServings: 4, calories: "~490 cal/serving", totalTime: 50,
+    macros: { protein: "35.8g", carbs: "10.7g", fat: "33.7g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"],
+    tags: ["curry", "chicken", "restaurant-style", "creamy", "mild"],
+    ingredients: [
+      { name: "Chicken (curry cut)", amount: 2, unit: "lb" },
+      { name: "Yogurt", amount: 1, unit: "cup" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Lemon juice", amount: 2, unit: "tbsp" },
+      { name: "Butter", amount: 2, unit: "tbsp" },
+      { name: "Oil", amount: 2, unit: "tbsp" },
+      { name: "Onion (finely chopped)", amount: 1, unit: "pcs" },
+      { name: "Tomatoes (pureed)", amount: 2, unit: "pcs" },
+      { name: "Cashew paste", amount: 1, unit: "tbsp" },
+      { name: "Red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Kasuri methi", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Fresh cream", amount: 2, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Marinate chicken", content: "Mix chicken with yogurt, ginger garlic paste, and lemon juice. Marinate 30 min to overnight.", timerSeconds: null },
+      { title: "Sear chicken", content: "Heat 1 tbsp butter + 1 tbsp oil. Sear marinated chicken until lightly browned (not fully cooked). Set aside.", timerSeconds: null },
+      { title: "Build the base", content: "In the same pan, sauté onion until golden. Add tomato puree and cashew paste, cook until oil separates, about 8-10 min.", timerSeconds: 600 },
+      { title: "Spice it", content: "Add red chilli powder, coriander powder, garam masala, salt. Cook 2 min.", timerSeconds: 120 },
+      { title: "Simmer chicken in curry", content: "Return chicken to the pan, add a splash of water if needed, cover and simmer until chicken is cooked through, 15-18 min.", timerSeconds: 1080 },
+      { title: "Finish", content: "Stir in remaining butter, cream, and crushed kasuri methi. Simmer 2-3 more min.", timerSeconds: 180 }
+    ],
+    notes: [
+      { label: "Vs. the marinade version", text: "Your Marinades tab has a Butter Chicken marinade meant to grill/bake then serve plain. This is the full restaurant-style curry — chicken simmered directly in a tomato-cashew-butter gravy." }
+    ],
+  },
+{
+    id: "cheese-toastie-dippers",
+    category: "meals",
+    title: "Cheese Toastie Dippers",
+    description: "Golden pan-fried bread dippers stuffed with melty cheese. Quick snack or lunchbox side — 6 dippers in 15 min.",
+    baseServings: 6, calories: "~110 cal/dipper", totalTime: 15,
+    tags: ["quick", "lunchbox", "snack"],
+    macros: { protein: 5, carbs: 12, fat: 5 },
+    micronutrients: ["Calcium", "Protein"],
+    ingredients: [
+      { name: "Whole wheat bread slices", amount: 4, unit: "pcs" },
+      { name: "Cheese (any meltable — gouda, mozzarella, cheddar)", amount: 4, unit: "tbsp" },
+      { name: "Egg", amount: 1, unit: "pcs" },
+      { name: "Milk", amount: 0.25, unit: "cup" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Ghee or butter", amount: 1, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Assemble", content: "Make 2 cheese sandwiches with the bread and cheese. Cut each sandwich into 3 strips (dippers).", timerSeconds: null },
+      { title: "Make egg wash", content: "Beat egg with milk and salt.", timerSeconds: null },
+      { title: "Dip and cook", content: "Dip each strip into egg wash, coating all sides. Pan fry in ghee/butter on medium heat until golden on all sides — about 2 min per side.", timerSeconds: 240 },
+      { title: "Serve", content: "Serve warm with ketchup or chutney for dipping.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Whole wheat swap", text: "Using whole wheat bread instead of white makes this substantially more nutritious." },
+      { label: "Lunchbox", text: "These hold up okay at room temperature. Pack ketchup/chutney separately." }
+    ],
+  },
+{
+    id: "meal-chicken-potato-tikki",
+    category: "meals",
+    title: "Chicken & Potato Tikki",
+    description: "A protein-forward variation — cooked shredded chicken instead of chickpeas. Needs an egg binder since chicken brings zero starch to hold things together.",
+    baseServings: 4, calories: "~217 cal/tikki", totalTime: 30,
+    macros: { protein: "14.2g", carbs: "21.0g", fat: "8.5g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Potassium"],
+    variations: [
+      { label: "Classic (garam masala)", calories: "~109 cal", macros: { protein: "7.1g", carbs: "10.5g", fat: "4.3g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Potassium"] },
+      { label: "Reshmi-style (cream, white pepper, cardamom)", calories: "~115 cal", macros: { protein: "7.1g", carbs: "10.5g", fat: "4.9g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Potassium"] }
+    ],
+    tags: ["tikki", "cutlet", "chicken", "high-protein", "kid-friendly"],
+    ingredients: [
+      { name: "Potato (boiled, mashed)", amount: 1.25, unit: "cup" },
+      { name: "Cooked chicken (shredded)", amount: 1, unit: "cup" },
+      { name: "Paneer (crumbled)", amount: 0.25, unit: "cup" },
+      { name: "Egg (binder)", amount: 1, unit: "pcs" },
+      { name: "Breadcrumbs", amount: 2, unit: "tbsp" },
+      { name: "Green chilli (minced)", amount: 1, unit: "pcs" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tsp" },
+      { name: "Garam masala", amount: 0.5, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Fresh coriander (chopped)", amount: 2, unit: "tbsp" },
+      { name: "Oil (for pan-frying)", amount: 2, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Shred chicken finely", content: "Make sure cooked chicken is finely shredded, not chunky — large pieces make the tikki fall apart when sliced or bitten.", timerSeconds: null },
+      { title: "Mix", content: "Combine mashed potato, shredded chicken, paneer, egg, breadcrumbs, green chilli, ginger garlic paste, garam masala, black pepper, salt, and coriander. Mix until just combined.", timerSeconds: null },
+      { title: "Shape", content: "Divide into 8 portions, shape into flat patties about 2.5 inches wide.", timerSeconds: null },
+      { title: "Pan-fry", content: "Heat oil in a pan on medium heat. Fry tikkis 4-5 min per side until golden (chicken needs slightly longer than an all-veg tikki to ensure it's heated through).", timerSeconds: 600 }
+    ],
+    notes: [
+      { label: "Why egg here", text: "Chicken brings protein but no starch, so it can't bind on its own the way potato does. Egg coagulates with heat and holds everything together reliably — skip it and the tikki is more likely to crack apart while frying." },
+      { label: "Don't overmix", text: "Cooked chicken doesn't have potato's natural fluffiness — overworking the mix makes these dense rather than light." },
+      { label: "Flavor idea", text: "Swap the spicing for a Reshmi-style version: skip garam masala, add 1 tbsp cream, ¼ tsp white pepper, and a pinch of cardamom powder instead." },
+      { label: "Calorie note", text: "Calculated from standard ingredient values, not a lab test — treat as a reasonable estimate, not exact." }
+    ],
+  },
+{
+    id: "meal-chicken-zucchini-meatballs",
+    category: "meals",
+    title: "Chicken & Zucchini Meatballs (Toddler-Friendly)",
+    description: "Juicy, tender meatballs with veggies mixed right in. Packed with protein and zucchini for a simple, filling toddler meal.",
+    baseServings: 2, calories: "~263 cal/3 meatballs", totalTime: 25,
+    macros: { protein: "23.1g", carbs: "12.1g", fat: "13.6g" }, microHighlights: ["Iron", "Calcium", "Protein"],
+    tags: ["toddler", "chicken", "high-protein", "kid-friendly", "meal-prep"],
+    ingredients: [
+      { name: "Ground chicken", amount: 0.5, unit: "lb" },
+      { name: "Grated zucchini", amount: 0.5, unit: "cup" },
+      { name: "Breadcrumbs", amount: 0.25, unit: "cup" },
+      { name: "Egg", amount: 1, unit: "pcs" },
+      { name: "Parmesan cheese", amount: 2, unit: "tbsp" },
+      { name: "Mild Italian seasoning", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Prep zucchini", content: "Grate zucchini finely and squeeze out the extra water using a clean towel — this is the key step, skipping it makes soggy meatballs.", timerSeconds: null },
+      { title: "Mix", content: "Combine ground chicken, squeezed zucchini, breadcrumbs, egg, parmesan, and Italian seasoning in a bowl. Mix gently — don't overwork.", timerSeconds: null },
+      { title: "Shape", content: "Roll into small 1-inch balls, toddler bite-sized.", timerSeconds: null },
+      { title: "Cook", content: "Bake at 400°F for 15-18 min, or pan-sear on medium until browned and cooked through (internal temp 165°F).", timerSeconds: 1080 }
+    ],
+    notes: [
+      { label: "Mom tip", text: "Grate the zucchini finely and squeeze out the extra water before mixing — this prevents soggy, falling-apart meatballs." },
+      { label: "Freezer-friendly", text: "Freeze cooked meatballs on a tray, then bag once solid. Reheat from frozen in the oven at 350°F for 10 min." }
+    ],
+  },
+{
+    id: "meal-chickpea-potato-paneer-tikki",
+    category: "meals",
+    title: "Chickpea, Potato & Paneer Tikki",
+    description: "Crisp outside, soft inside — potato for binding, chickpeas for bite and fiber, paneer for richness. A protein-fiber-starch trio that holds together well.",
+    baseServings: 4, calories: "~171 cal/tikki", totalTime: 30,
+    macros: { protein: "8.2g", carbs: "24.3g", fat: "4.5g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Fiber", "Protein", "Vitamin A", "Potassium"],
+    tags: ["tikki", "cutlet", "vegetarian", "high-fiber", "kid-friendly"],
+    ingredients: [
+      { name: "Potato (boiled, mashed)", amount: 1, unit: "cup" },
+      { name: "Chickpeas (boiled, mashed)", amount: 0.5, unit: "cup" },
+      { name: "Paneer (crumbled)", amount: 0.33, unit: "cup" },
+      { name: "Besan (chickpea flour)", amount: 2, unit: "tbsp" },
+      { name: "Green chilli (minced)", amount: 1, unit: "pcs" },
+      { name: "Ginger (grated)", amount: 1, unit: "tsp" },
+      { name: "Cumin powder", amount: 0.5, unit: "tsp" },
+      { name: "Coriander powder", amount: 0.5, unit: "tsp" },
+      { name: "Garam masala", amount: 0.25, unit: "tsp" },
+      { name: "Amchur (dry mango powder)", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Fresh coriander (chopped)", amount: 2, unit: "tbsp" },
+      { name: "Oil (for pan-frying)", amount: 2, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Dry the mash", content: "Make sure boiled potato and chickpeas are well-drained and mashed dry — excess moisture is the #1 cause of tikkis falling apart. Pan-dry mashed mixture on low heat 1-2 min if it feels wet.", timerSeconds: 120 },
+      { title: "Mix", content: "Combine mashed potato, chickpeas, crumbled paneer, besan, green chilli, ginger, all spices, salt, and coriander. Mix gently until just combined — overmixing makes it dense.", timerSeconds: null },
+      { title: "Shape", content: "Divide into 8 portions, shape into flat patties about 2.5 inches wide.", timerSeconds: null },
+      { title: "Pan-fry", content: "Heat oil in a pan on medium heat. Fry tikkis 3-4 min per side until golden and crisp.", timerSeconds: 480 }
+    ],
+    notes: [
+      { label: "Why this ratio works", text: "Potato brings gelatinized starch for binding, chickpeas add fiber and bite but little binding power on their own, paneer adds richness without much structure. Together they balance — no single ingredient dominates or falls apart." },
+      { label: "Moisture control", text: "If the mix feels wet after mixing, add another tbsp of besan or breadcrumbs rather than more potato — extra starch from potato can make it gummy instead of crisp." },
+      { label: "Calorie note", text: "Calculated from standard ingredient values, not a lab test — treat as a reasonable estimate, not exact." }
+    ],
+  },
+{
+    id: "curry-coconut-chicken",
+    category: "meals",
+    title: "Coconut Chicken Curry",
+    description: "South Indian style — coconut milk and fresh grated coconut with mustard seed tempering. The full curry, different from the Kerala Coconut marinade.",
+    baseServings: 4, calories: "~395 cal/serving", totalTime: 40,
+    macros: { protein: "33.0g", carbs: "8.6g", fat: "25.4g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"],
+    tags: ["curry", "chicken", "coconut", "south-indian", "mild"],
+    ingredients: [
+      { name: "Chicken (curry cut)", amount: 2, unit: "lb" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Oil", amount: 2, unit: "tbsp" },
+      { name: "Onion (finely chopped)", amount: 1, unit: "pcs" },
+      { name: "Tomato (chopped)", amount: 1, unit: "pcs" },
+      { name: "Coconut milk", amount: 0.5, unit: "cup" },
+      { name: "Fresh grated coconut", amount: 0.25, unit: "cup" },
+      { name: "Green chillies (slit)", amount: 1.5, unit: "pcs" },
+      { name: "Mustard seeds", amount: 1, unit: "tsp" },
+      { name: "Curry leaves", amount: 1, unit: "tsp" },
+      { name: "Turmeric powder", amount: 0.5, unit: "tsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Temper", content: "Heat oil, add mustard seeds until they pop. Add curry leaves and green chillies.", timerSeconds: 30 },
+      { title: "Sauté base", content: "Add onion, cook until golden. Add ginger garlic paste, cook 1-2 min.", timerSeconds: 120 },
+      { title: "Add tomato and spices", content: "Add chopped tomato, turmeric, coriander powder. Cook until tomato softens, 5 min.", timerSeconds: 300 },
+      { title: "Cook chicken", content: "Add chicken, sear a few minutes with the spice base.", timerSeconds: null },
+      { title: "Simmer with coconut", content: "Add coconut milk and grated coconut, salt. Cover and simmer until chicken is cooked through, 18-20 min.", timerSeconds: 1200 },
+      { title: "Finish", content: "Stir in garam masala, simmer 2 more min.", timerSeconds: 120 }
+    ],
+    notes: [
+      { label: "Vs. the Kerala Coconut marinade", text: "The marinade version in your Marinades tab is meant for grilling. This is a full simmered curry with a coconut-milk gravy — more traditional South Indian home-style." }
+    ],
+  },
+{
+    id: "crispy-chicken-bites-rice-paper",
+    category: "meals",
+    title: "Crispy Chicken Bites (Rice Paper)",
+    description: "Air-fried crispy chicken rolls using rice paper sheets — no deep frying. Loaded with fresh aromatics.",
+    baseServings: 7, calories: "~160 cal/roll", totalTime: 40,
+    tags: ["healthy", "high-protein", "air-fryer"],
+    macros: { protein: 18, carbs: 8, fat: 5 },
+    micronutrients: ["Protein", "Iron", "Vitamin C"],
+    ingredients: [
+      { name: "Chicken keema (minced chicken)", amount: 1, unit: "lb" },
+      { name: "Onion, medium, finely chopped", amount: 1, unit: "pcs" },
+      { name: "Garlic cloves, minced", amount: 3, unit: "pcs" },
+      { name: "Ginger, grated (2-inch piece)", amount: 1, unit: "tbsp" },
+      { name: "Coriander, chopped", amount: 0.25, unit: "cup" },
+      { name: "Green onion chives, chopped", amount: 3, unit: "tbsp" },
+      { name: "Black pepper", amount: 1, unit: "tsp" },
+      { name: "Kashmiri red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Chilli flakes", amount: 1, unit: "tsp" },
+      { name: "Soy sauce", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Rice paper sheets", amount: 7, unit: "pcs" },
+      { name: "Oil (for brushing)", amount: 1, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Prep filling", content: "Finely chop onion, garlic, ginger, coriander, and green onion chives.", timerSeconds: null },
+      { title: "Mix", content: "Add chopped veggies to minced chicken along with black pepper, Kashmiri red chilli, chilli flakes, soy sauce, and salt. Mix until well combined.", timerSeconds: null },
+      { title: "Divide", content: "Divide the chicken mixture into 7 equal portions.", timerSeconds: null },
+      { title: "Wrap", content: "Dip each rice paper sheet in water for a few seconds until pliable. Strain excess water. Place one portion of filling in the middle. Roll tightly, tucking sides in. Cut each roll into bite-size pieces.", timerSeconds: null },
+      { title: "Air fry", content: "Preheat air fryer at 180C for 5 min. Place rolls in basket, brush with oil. Air fry at 190C for 15-20 min until golden and crispy, flipping halfway.", timerSeconds: 1050 },
+      { title: "Serve", content: "Serve hot with chilli oil or sweet chilli sauce.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Rice paper", text: "Don't oversoak — just a quick dip until pliable. Oversoaked sheets tear easily." },
+      { label: "No air fryer", text: "Pan fry in 1 tbsp oil on medium heat, turning until all sides are golden (about 8-10 min total)." },
+      { label: "Food safety", text: "Chicken keema is raw — ensure internal temp reaches 74C / 165F. Cut one open to check if unsure." }
+    ],
+  },
+{
+    id: "curry-green-chicken",
+    category: "meals",
+    title: "Green Chicken Curry",
+    description: "Fresh and herby — yogurt, cilantro, mint, and green chillies simmered into a full curry. Different from the Hariyali marinade — this is a complete cooked dish with gravy.",
+    baseServings: 4, calories: "~396 cal/serving", totalTime: 45,
+    macros: { protein: "34.0g", carbs: "8.6g", fat: "25.0g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Potassium"],
+    tags: ["curry", "chicken", "green", "herby", "mild-medium"],
+    ingredients: [
+      { name: "Chicken (curry cut)", amount: 2, unit: "lb" },
+      { name: "Yogurt", amount: 1, unit: "cup" },
+      { name: "Fresh cilantro", amount: 0.25, unit: "cup" },
+      { name: "Fresh mint", amount: 0.25, unit: "cup" },
+      { name: "Green chillies", amount: 2.5, unit: "pcs" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Oil", amount: 2, unit: "tbsp" },
+      { name: "Onion (finely chopped)", amount: 1, unit: "pcs" },
+      { name: "Cumin powder", amount: 1, unit: "tsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Turmeric powder", amount: 0.5, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Black pepper powder", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Make green paste", content: "Blend cilantro, mint, green chillies, and yogurt into a smooth paste.", timerSeconds: null },
+      { title: "Sauté aromatics", content: "Heat oil, sauté onion until golden. Add ginger garlic paste, cook 1-2 min.", timerSeconds: 120 },
+      { title: "Add spices", content: "Add cumin, coriander, turmeric powder. Cook 1 min until fragrant.", timerSeconds: 60 },
+      { title: "Cook chicken", content: "Add chicken, sear a few minutes. Pour in the green yogurt paste, mix well.", timerSeconds: null },
+      { title: "Simmer", content: "Cover and simmer on low until chicken is cooked through and gravy thickens, 20-25 min.", timerSeconds: 1500 },
+      { title: "Finish", content: "Stir in garam masala, black pepper, salt, and lemon juice. Simmer 2 more min.", timerSeconds: 120 }
+    ],
+    notes: [
+      { label: "Vs. the Hariyali marinade", text: "Hariyali in your Marinades tab is meant for grilling — coat and cook dry. This is a full simmered curry with a yogurt-herb gravy, more like a home-style green curry." }
+    ],
+  },
+{
+    id: "meal-makhana-uttapam",
+    category: "meals",
+    title: "Healthy Makhana Uttapam",
+    description: "Calcium-rich mini uttapams made with makhana, poha, and sooji — soft, cheesy, and toddler-friendly. No maida.",
+    baseServings: 6, calories: "~120 cal/uttapam", totalTime: 35,
+    tags: ["healthy", "no-maida", "toddler-friendly", "lunchbox", "calcium-rich"],
+    macros: { protein: 5, carbs: 16, fat: 4 },
+    micronutrients: ["Calcium", "Iron", "Protein", "Fiber"],
+    ingredients: [
+      { name: "Makhana (fox nuts)", amount: 0.5, unit: "cup" },
+      { name: "Poha (flattened rice)", amount: 0.5, unit: "cup" },
+      { name: "Sooji (semolina)", amount: 0.5, unit: "cup" },
+      { name: "Yogurt", amount: 0.5, unit: "cup" },
+      { name: "Water", amount: 0.5, unit: "cup" },
+      { name: "Green chilies, finely chopped", amount: 1, unit: "pcs" },
+      { name: "Ginger, grated", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Baking soda / fruit salt (optional)", amount: 0.5, unit: "tsp" },
+      { name: "Capsicum, chopped", amount: 2, unit: "tbsp" },
+      { name: "Corn kernels", amount: 2, unit: "tbsp" },
+      { name: "Tomato, chopped", amount: 2, unit: "tbsp" },
+      { name: "Paneer, crumbled", amount: 2, unit: "tbsp" },
+      { name: "Cheese, grated", amount: 2, unit: "tbsp" },
+      { name: "Ghee (for cooking)", amount: 1, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Soak base", content: "In a bowl, mix makhana, poha, sooji, yogurt, and water. Stir well and let rest 15-20 minutes until the makhana and poha soften.", timerSeconds: 1200 },
+      { title: "Make batter", content: "Add chopped green chilies, grated ginger, and salt to the soaked mixture. Blend everything into a smooth batter.", timerSeconds: null },
+      { title: "Make it fluffy", content: "Just before cooking, add 1/2 tsp fruit salt (or baking soda) to the batter and mix gently. You'll see it become light and aerated.", timerSeconds: null },
+      { title: "Prep toppings", content: "In a separate bowl, combine chopped capsicum, corn, tomato, and coriander for the veggie mix.", timerSeconds: null },
+      { title: "Cook", content: "Heat a pan and grease lightly with ghee. Pour a small ladleful of batter to form a mini uttapam. Sprinkle the veggie mix on top, then add grated cheese.", timerSeconds: null },
+      { title: "Flip and finish", content: "Cook on low flame until golden on bottom. Flip carefully and cook other side 1-2 min.", timerSeconds: 120 },
+      { title: "Serve", content: "Serve hot with green chutney.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Why it works for kids", text: "Makhana is rich in calcium for growing bones, poha and sooji provide steady energy, and the veggies add fiber and vitamins. Soft, cheesy, and easy for little hands." },
+      { label: "Lunchbox", text: "Pack at room temperature with chutney on the side." }
+    ],
+  },
+{
+    id: "healthy-multi-flour-waffles",
+    category: "meals",
+    title: "Healthy Multi-Flour Waffles",
+    description: "Crispy, protein-rich waffles using a whole wheat + almond + jowar flour blend. No maida. Great for breakfast or lunchbox.",
+    baseServings: 4, calories: "~180 cal/waffle", totalTime: 20,
+    tags: ["healthy", "no-maida", "high-protein", "breakfast", "lunchbox"],
+    macros: { protein: 7, carbs: 18, fat: 6 },
+    micronutrients: ["Iron", "Protein", "Fiber", "Healthy Fats"],
+    ingredients: [
+      { name: "Whole wheat flour", amount: 0.5, unit: "cup" },
+      { name: "Almond flour", amount: 0.25, unit: "cup" },
+      { name: "Jowar flour", amount: 0.25, unit: "cup" },
+      { name: "Egg", amount: 1, unit: "pcs" },
+      { name: "Milk (or buttermilk)", amount: 0.75, unit: "cup" },
+      { name: "Oil or melted ghee", amount: 1, unit: "tbsp" },
+      { name: "Baking powder", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 0.25, unit: "tsp" },
+      { name: "Honey or jaggery powder (optional)", amount: 1, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Mix dry ingredients", content: "Whisk whole wheat flour, almond flour, jowar flour, baking powder, and salt in a bowl.", timerSeconds: null },
+      { title: "Mix wet ingredients", content: "Beat egg. Add milk (or buttermilk for fluffier waffles), oil/ghee, and honey/jaggery if using. Whisk well.", timerSeconds: null },
+      { title: "Combine", content: "Pour wet into dry. Fold gently until just combined — a few lumps are fine. Do NOT overmix (makes waffles tough).", timerSeconds: null },
+      { title: "Rest batter", content: "Let batter rest 5 minutes. This hydrates the jowar and wheat, giving better texture.", timerSeconds: 300 },
+      { title: "Cook", content: "Preheat waffle maker. Brush lightly with ghee or oil. Pour batter (don't overfill). Cook 4-5 minutes until golden and crisp.", timerSeconds: 270 },
+      { title: "Serve", content: "Serve hot with curd, mint chutney (savory) or honey + fruits (sweet).", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Flour ratio", text: "50% whole wheat provides structure (gluten), 25% almond adds protein + moisture, 25% jowar adds iron + fiber. Don't go above 50% non-wheat or waffles won't hold together." },
+      { label: "Buttermilk trick", text: "Buttermilk reacts with baking powder for extra lift — big difference with heavy flours. Make from dahi: 2 tbsp dahi + enough milk to reach 3/4 cup." },
+      { label: "Savory variation", text: "Skip sweetener. Add 1/4 tsp turmeric, pinch of ajwain, and 2 tbsp finely chopped coriander to the batter." },
+      { label: "Lunchbox tip", text: "Cool on a wire rack (not plate) to stay crispy. Reheat in toaster or air fryer at 180C for 2 min." }
+    ],
+  },
+{
+    id: "high-protein-bagels",
+    category: "meals",
+    title: "High Protein Bagels (3 Flavors)",
+    description: "4-ingredient high protein bagels — no yeast, no rise time. Crispy outside, chewy inside. Three flavors: Everything, Cheddar, or Jalapeno Cheddar.",
+    baseServings: 4, calories: "~241 cal/bagel", totalTime: 35,
+    macros: { protein: "8.4g", carbs: "38.1g", fat: "6.1g" }, microHighlights: ["Iron", "Calcium", "Protein", "Healthy Fats", "Potassium"],
+    tags: ["breakfast", "high-protein", "meal-prep", "bagels", "cheddar", "jalapeno"],
+    ingredients: [
+      { name: "Greek yogurt (full fat)", amount: 1, unit: "cup" },
+      { name: "Self-rising flour", amount: 1.5, unit: "cup" },
+      { name: "Egg (for wash)", amount: 1, unit: "pcs" },
+      { name: "Sesame seeds / everything seasoning", amount: 2, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Mix dough", content: "Combine Greek yogurt and self-rising flour. Mix until a shaggy dough forms. Knead 2-3 minutes on a floured surface until smooth. For Cheddar: fold in 1/2 cup shredded cheddar. For Jalapeno Cheddar: fold in 1/2 cup cheddar + 2 tbsp diced jalapeno.", timerSeconds: null },
+      { title: "Shape bagels", content: "Divide into 4 equal pieces. Roll each into a rope and join ends to form a ring. Place on parchment-lined baking sheet.", timerSeconds: null },
+      { title: "Egg wash and top", content: "Beat egg and brush tops. Sprinkle with sesame seeds, everything seasoning, or extra cheese.", timerSeconds: null },
+      { title: "Bake", content: "Bake at 375F (190C) for 22-25 minutes until golden brown.", timerSeconds: 1500 }
+    ],
+    notes: [
+      { label: "Overnight prep", text: "Shape bagels the night before, cover with plastic wrap, refrigerate. In the morning just egg wash, top, and bake." },
+      { label: "Meal prep", text: "Make a batch of 8. Cool completely, slice, and freeze. Toast from frozen for 3-4 minutes." },
+      { label: "Protein boost", text: "Greek yogurt adds ~15g protein per cup. For even more protein, use a protein-enriched flour." }
+    ],
+  },
+{
+    id: "meal-highprotein-spinach-pasta",
+    category: "meals",
+    title: "High-Protein Creamy Spinach Pasta",
+    description: "Creamy, cheesy, comforting pasta made with spinach and paneer — no cream needed, paneer does the magic.",
+    baseServings: 2, calories: "~506 cal/serving", totalTime: 25,
+    macros: { protein: "25.4g", carbs: "35.9g", fat: "29.0g" }, microHighlights: ["Iron", "Calcium", "Fiber", "Protein", "Vitamin A", "Potassium"],
+    tags: ["pasta", "high-protein", "paneer", "no-cream", "vegetarian"],
+    ingredients: [
+      { name: "Raw pasta", amount: 3, unit: "oz" },
+      { name: "Low-fat paneer", amount: 4, unit: "oz" },
+      { name: "Mozzarella cheese", amount: 2, unit: "oz" },
+      { name: "Butter", amount: 1, unit: "tbsp" },
+      { name: "Spinach (for sauce + sauté)", amount: 1, unit: "cup" },
+      { name: "Garlic cloves", amount: 3.5, unit: "pcs" },
+      { name: "Mushrooms (optional)", amount: 0.5, unit: "cup" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Onion powder", amount: 0.5, unit: "tsp" },
+      { name: "Garlic powder", amount: 0.5, unit: "tsp" },
+      { name: "Oregano", amount: 0.5, unit: "tsp" },
+      { name: "Peri-peri masala (optional)", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Boil pasta", content: "Boil pasta in salted water until al dente. Drain and keep aside, saving a little pasta water if needed.", timerSeconds: null },
+      { title: "Make creamy spinach sauce", content: "In a blender, add spinach, paneer, garlic, black pepper, salt, onion powder, garlic powder, and oregano. Blend until smooth and creamy — no cream needed, paneer does the magic.", timerSeconds: null },
+      { title: "Sauté base", content: "In a pan, add butter. Sauté garlic until fragrant. Add mushrooms and a little spinach, cook until soft and slightly golden.", timerSeconds: null },
+      { title: "Build the flavor", content: "Add the spinach-paneer puree to the pan. Season again with salt, onion garlic powder, and peri-peri masala. Let it cook for 2-3 minutes.", timerSeconds: 180 },
+      { title: "Toss and finish", content: "Add the boiled pasta. Mix everything well so it coats evenly. Finally, add mozzarella and let it melt into the sauce.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "No cream needed", text: "Paneer blended smooth replaces cream entirely — same creamy texture, more protein, less fat." },
+      { label: "Macros (per full recipe)", text: "~767 kcal, ~54g protein total. Per serving (half): ~384 kcal, ~27g protein." },
+      { label: "Elevate it", text: "A sprinkle of extra peri-peri masala on top genuinely elevates the taste." },
+      { label: "Fiber tip", text: "Use whole wheat or protein pasta for more fiber and better fullness." }
+    ],
+  },
+{
+    id: "meal-high-protein-egg-cups",
+    category: "meals",
+    title: "High-Protein Egg Cups",
+    description: "Baked egg cups with cottage cheese, chicken sausage, and veggies — high protein, easy meal prep. Better and cheaper than Starbucks egg bites.",
+    baseServings: 10, calories: "~110 cal/cup", totalTime: 30,
+    tags: ["high-protein", "meal-prep", "breakfast", "freezer-friendly"],
+    macros: { protein: 10, carbs: 2, fat: 6 },
+    micronutrients: ["Protein", "Calcium", "Vitamin A"],
+    ingredients: [
+      { name: "Large eggs", amount: 10, unit: "pcs" },
+      { name: "Cottage cheese", amount: 1.5, unit: "cup" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Black pepper", amount: 0.25, unit: "tsp" },
+      { name: "Cooked chicken sausage, diced", amount: 0.5, unit: "cup" },
+      { name: "Mushrooms, sauteed", amount: 0.5, unit: "cup" },
+      { name: "Bell peppers, sauteed and diced", amount: 0.5, unit: "cup" },
+      { name: "Parmesan cheese, grated", amount: 0.25, unit: "cup" }
+    ],
+    steps: [
+      { title: "Preheat", content: "Preheat oven to 375F (190C). Spray a muffin tin generously with nonstick spray or grease with butter.", timerSeconds: null },
+      { title: "Blend base", content: "Blend eggs, cottage cheese, salt, and pepper until smooth using an immersion blender, blender, or whisk.", timerSeconds: null },
+      { title: "Fill cups", content: "Fill muffin cups almost to the top with the egg mixture.", timerSeconds: null },
+      { title: "Add fillings", content: "Add diced chicken sausage, sauteed mushrooms, and bell peppers to each cup. Top with parmesan cheese.", timerSeconds: null },
+      { title: "Bake", content: "Bake 20-25 minutes until tops are set and spring back when lightly pressed.", timerSeconds: 1350 },
+      { title: "Cool and serve", content: "Let cool 5 minutes, then use a fork to pop them out.", timerSeconds: 300 }
+    ],
+    notes: [
+      { label: "Meal prep", text: "Store in containers with 2 egg cups each. Keep in fridge for 4-5 days. Reheat in microwave 45-60 sec." },
+      { label: "Variations", text: "Spinach + cheddar, ham + pepper jack, bacon + Swiss — all work great. Use whatever veggies and cheese you have." },
+      { label: "Freezer-friendly", text: "Freeze individually on a tray, then bag. Reheat from frozen in microwave ~90 sec." }
+    ],
+  },
+{
+    id: "curry-kadai-chicken",
+    category: "meals",
+    title: "Kadai Chicken Curry (Full Dish)",
+    description: "Bold and chunky — bell peppers, tomatoes, and crushed kadai spices in a robust curry. The full cooked dish, different from the Kadai marinade.",
+    baseServings: 4, calories: "~380 cal/serving", totalTime: 40,
+    macros: { protein: "32.9g", carbs: "8.9g", fat: "23.6g" }, microHighlights: ["Iron", "Vitamin C", "Protein"],
+    tags: ["curry", "chicken", "spicy", "restaurant-style", "capsicum"],
+    ingredients: [
+      { name: "Chicken (curry cut)", amount: 2, unit: "lb" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Oil", amount: 2, unit: "tbsp" },
+      { name: "Onion (roughly chopped)", amount: 1, unit: "pcs" },
+      { name: "Tomatoes (chopped)", amount: 2, unit: "pcs" },
+      { name: "Green bell pepper (chopped)", amount: 1, unit: "pcs" },
+      { name: "Red bell pepper (chopped)", amount: 1, unit: "pcs" },
+      { name: "Green chillies (slit)", amount: 2.5, unit: "pcs" },
+      { name: "Cumin seeds", amount: 1, unit: "tsp" },
+      { name: "Coriander seeds (crushed)", amount: 1, unit: "tsp" },
+      { name: "Red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Kasuri methi", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Toast whole spices", content: "Heat oil, add cumin seeds and crushed coriander seeds. Toast until fragrant, 30 sec.", timerSeconds: 30 },
+      { title: "Sauté base", content: "Add onion, cook until soft. Add ginger garlic paste, cook 1-2 min.", timerSeconds: 120 },
+      { title: "Add tomatoes", content: "Add chopped tomatoes, cook until soft and oil separates, 6-8 min.", timerSeconds: 480 },
+      { title: "Cook chicken", content: "Add chicken and green chillies, cook 5 min. Add red chilli powder and salt.", timerSeconds: 300 },
+      { title: "Simmer", content: "Cover and cook until chicken is nearly done, 12-15 min.", timerSeconds: 900 },
+      { title: "Add peppers and finish", content: "Add bell peppers, cook uncovered 5 min so they stay slightly crunchy. Finish with garam masala and crushed kasuri methi.", timerSeconds: 300 }
+    ],
+    notes: [
+      { label: "Vs. the Kadai marinade", text: "Your Marinades tab has a Kadai marinade for grilling. This is the classic kadai-style curry with chunky peppers and tomatoes, cooked directly in a pan/kadai — no marinating required." },
+      { label: "Texture tip", text: "Add the bell peppers late so they stay crisp-tender rather than turning mushy." }
+    ],
+  },
+{
+    id: "kerala-fried-chicken",
+    category: "meals",
+    title: "Kerala Fried Chicken (Air Fryer)",
+    description: "Heavily spiced Kerala-style chicken thighs with curry leaves — air fried for crispy skin without deep frying.",
+    baseServings: 3, calories: "~320 cal/serving", totalTime: 40,
+    tags: ["healthy", "high-protein", "air-fryer", "spicy"],
+    macros: { protein: 30, carbs: 10, fat: 16 },
+    micronutrients: ["Protein", "Iron", "Healthy Fats"],
+    ingredients: [
+      { name: "Boneless chicken thigh", amount: 1, unit: "lb" },
+      { name: "Onion, medium, grated", amount: 1, unit: "pcs" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Corn flour", amount: 2, unit: "tbsp" },
+      { name: "Rice flour", amount: 2, unit: "tbsp" },
+      { name: "Garam masala", amount: 1.5, unit: "tsp" },
+      { name: "Cumin powder", amount: 1, unit: "tsp" },
+      { name: "Turmeric powder", amount: 0.25, unit: "tsp" },
+      { name: "Fennel powder", amount: 1, unit: "tsp" },
+      { name: "Coriander powder", amount: 2, unit: "tsp" },
+      { name: "Red chilli powder", amount: 0.5, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Kashmiri chilli powder", amount: 2, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Lemon juice", amount: 2, unit: "tsp" },
+      { name: "Coconut oil", amount: 1, unit: "tbsp" },
+      { name: "Curry leaves", amount: 10, unit: "pcs" }
+    ],
+    steps: [
+      { title: "Make marinade", content: "Mix grated onion, ginger garlic paste, corn flour, rice flour, and ALL the spice powders. Add lemon juice, coconut oil, and salt. Combine into a thick paste.", timerSeconds: null },
+      { title: "Marinate", content: "Add chicken thighs and rub the marinade in well. Rest for 5-10 min (or longer in fridge for deeper flavor).", timerSeconds: 600 },
+      { title: "Air fry", content: "Preheat air fryer. Air fry at 190C for 15-18 min, flipping halfway. Add fresh curry leaves and slit green chillies in the last 4-5 min.", timerSeconds: 990 },
+      { title: "Serve", content: "Serve with creamy onions (thinly sliced onion rings + lemon juice) and raita.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Coconut oil", text: "Coconut oil is traditional Kerala flavor — but any oil works." },
+      { label: "Curry leaves", text: "Adding curry leaves at the end keeps them crispy and aromatic. They burn if added too early in air fryer." },
+      { label: "Spice level", text: "This is HEAVILY spiced. Reduce Kashmiri chilli and red chilli by half for milder version." }
+    ],
+  },
+{
+    id: "no-maida-mini-pizzas",
+    category: "meals",
+    title: "No-Maida Mini Pizzas",
+    description: "Soft mini pizzas with multigrain flour dough, loaded with veggies and cheese. Perfect lunchbox item. Stove-top — no oven needed.",
+    baseServings: 6, calories: "~220 cal/pizza", totalTime: 90,
+    tags: ["healthy", "no-maida", "lunchbox"],
+    macros: { protein: 10, carbs: 28, fat: 8 },
+    micronutrients: ["Calcium", "Protein", "Fiber"],
+    ingredients: [
+      { name: "Multigrain flour", amount: 2, unit: "cup" },
+      { name: "Milk", amount: 1, unit: "cup" },
+      { name: "Egg", amount: 1, unit: "pcs" },
+      { name: "Instant yeast", amount: 1, unit: "tsp" },
+      { name: "Sugar", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Oil", amount: 2, unit: "tsp" },
+      { name: "Mozzarella cheese, grated", amount: 1, unit: "cup" },
+      { name: "Capsicum, diced", amount: 0.25, unit: "cup" },
+      { name: "Tomato, diced", amount: 0.25, unit: "cup" },
+      { name: "Black olives, sliced", amount: 2, unit: "tbsp" },
+      { name: "Chilli garlic sauce or pizza sauce", amount: 4, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Make dough", content: "Mix flour, yeast, sugar, salt. Add egg, milk, and oil. Knead into a soft, slightly sticky dough. Add milk gradually — you may not need all of it.", timerSeconds: null },
+      { title: "Rise", content: "Cover dough and let rise in a warm place for 45-60 min until doubled.", timerSeconds: 3600 },
+      { title: "Shape", content: "Punch down dough. Divide into 6 equal portions. Roll each into a small round (about 4 inches). Place on greased tray or parchment.", timerSeconds: null },
+      { title: "Top", content: "Spread chilli garlic/pizza sauce on each base. Add diced veggies, olives, and top generously with mozzarella.", timerSeconds: null },
+      { title: "Cook on stove", content: "Place in a heavy pan (with lid). Cook on low-medium heat for 10 min — no flipping needed. Cheese should be melted and base golden.", timerSeconds: 600 },
+      { title: "Serve", content: "Let cool slightly before serving. Great warm or at room temperature for lunchbox.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Chicken variation", text: "Add 1-2 cups cooked chicken chunks as a topping for a protein boost." },
+      { label: "Stove method", text: "No oven needed — stove-top with a lid works perfectly. Keep heat low-medium and don't lift lid for first 8 min." }
+    ],
+  },
+{
+    id: "meal-one-pot-mexican-rice",
+    category: "meals",
+    title: "One Pot Mexican Rice (High Protein)",
+    description: "Dump, cook, and done — healthy, filling, and packed with flavor. Quinoa + rice + rajma for a protein-rich one-pot meal.",
+    baseServings: 2, calories: "~267 cal/serving", totalTime: 20,
+    macros: { protein: "7.5g", carbs: "39.3g", fat: "8.9g" }, microHighlights: ["Iron", "Vitamin C", "Fiber", "Protein", "Healthy Fats", "Vitamin A"],
+    variations: [
+      { label: "Rajma (default)", calories: "~267 cal", macros: { protein: "7.5g", carbs: "39.3g", fat: "8.9g" }, microHighlights: ["Iron", "Vitamin C", "Fiber", "Protein", "Healthy Fats", "Vitamin A"] },
+      { label: "Chole (chickpeas) instead", calories: "~270 cal", macros: { protein: "7.7g", carbs: "39.8g", fat: "8.9g" }, microHighlights: ["Iron", "Vitamin C", "Fiber", "Protein", "Healthy Fats", "Vitamin A"] },
+      { label: "+ Paneer cubes", calories: "~311 cal", macros: { protein: "11.3g", carbs: "39.6g", fat: "11.9g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Fiber", "Protein", "Healthy Fats", "Vitamin A"] },
+      { label: "+ Tofu boost", calories: "~290 cal", macros: { protein: "9.5g", carbs: "39.5g", fat: "10.4g" }, microHighlights: ["Iron", "Vitamin C", "Fiber", "Protein", "Healthy Fats", "Vitamin A"] }
+    ],
+    tags: ["one-pot", "high-protein", "rajma", "quinoa", "meal-prep", "vegetarian"],
+    ingredients: [
+      { name: "Quinoa", amount: 0.25, unit: "cup" },
+      { name: "Rice", amount: 0.25, unit: "cup" },
+      { name: "Boiled rajma", amount: 0.25, unit: "cup" },
+      { name: "Bell peppers (chopped)", amount: 0.5, unit: "cup" },
+      { name: "Carrots (chopped)", amount: 0.25, unit: "cup" },
+      { name: "Corn", amount: 0.25, unit: "cup" },
+      { name: "Tomato (chopped)", amount: 1, unit: "pcs" },
+      { name: "Onion (sliced)", amount: 0.5, unit: "pcs" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tsp" },
+      { name: "Red chilli powder", amount: 0.5, unit: "tsp" },
+      { name: "Chilli flakes", amount: 1, unit: "tsp" },
+      { name: "Cumin seeds", amount: 0.5, unit: "tsp" },
+      { name: "Cumin powder", amount: 0.5, unit: "tsp" },
+      { name: "Coriander powder", amount: 0.5, unit: "tsp" },
+      { name: "Black pepper powder", amount: 0.25, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Olive oil", amount: 1, unit: "tbsp" },
+      { name: "Water", amount: 1, unit: "cup" }
+    ],
+    steps: [
+      { title: "Sauté base", content: "Heat olive oil in a pressure cooker, add cumin seeds and sliced onions. Cook until translucent.", timerSeconds: null },
+      { title: "Add aromatics", content: "Add ginger garlic paste and cook until the raw smell goes away.", timerSeconds: null },
+      { title: "Add everything else", content: "Add all the veggies, soaked rice and quinoa, boiled rajma, and 1 cup water. Check for salt at this point.", timerSeconds: null },
+      { title: "Pressure cook", content: "Pressure cook for 1 whistle, then simmer 2-3 more minutes.", timerSeconds: 180 },
+      { title: "Rest and serve", content: "Let it naturally depressurize. Garnish with fresh coriander and enjoy with Greek yogurt on the side.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Protein swaps", text: "Replace rajma with chole, kala chana, or white matar. Add thick grated tofu for an extra protein boost. Add paneer cubes for a delicious twist." },
+      { label: "Fully vegetarian-flexible", text: "Can make it completely with quinoa as well, skipping rice entirely." },
+      { label: "Nutrition", text: "~20-25g protein per serving, high in fiber, complex carbs, nutrient-rich. Great one-pot busy-day meal." }
+    ],
+  },
+{
+    id: "savory-veggie-jowar-waffles",
+    category: "meals",
+    title: "Savory Veggie Jowar Waffles",
+    description: "Savory Indian waffles loaded with spinach, carrot, paneer — jowar and besan base. No maida, no egg. Serve with curd or mint chutney.",
+    baseServings: 4, calories: "~150 cal/waffle", totalTime: 25,
+    tags: ["healthy", "no-maida", "vegetarian", "lunchbox", "toddler-friendly"],
+    macros: { protein: 6, carbs: 20, fat: 5 },
+    micronutrients: ["Iron", "Calcium", "Fiber", "Vitamin A", "Protein"],
+    ingredients: [
+      { name: "Jowar flour", amount: 1, unit: "cup" },
+      { name: "Besan (gram flour)", amount: 0.25, unit: "cup" },
+      { name: "Spinach, finely chopped", amount: 0.5, unit: "cup" },
+      { name: "Carrot, grated", amount: 0.25, unit: "cup" },
+      { name: "Onion, finely chopped", amount: 0.25, unit: "cup" },
+      { name: "Paneer, crumbled", amount: 0.25, unit: "cup" },
+      { name: "Coriander leaves, chopped", amount: 2, unit: "tbsp" },
+      { name: "Sesame seeds", amount: 1, unit: "tsp" },
+      { name: "Turmeric powder", amount: 0.25, unit: "tsp" },
+      { name: "Coriander powder", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Water", amount: 0.75, unit: "cup" },
+      { name: "Ghee (for greasing)", amount: 1, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Mix vegetables", content: "In a mixing bowl, combine spinach, carrot, onion, paneer, coriander leaves, and sesame seeds.", timerSeconds: null },
+      { title: "Add dry ingredients", content: "Add jowar flour, besan, salt, turmeric powder, and coriander powder. Mix well.", timerSeconds: null },
+      { title: "Make batter", content: "Gradually add water and mix into a smooth, thick, lump-free batter. Should be pourable but not runny.", timerSeconds: null },
+      { title: "Cook waffles", content: "Preheat waffle maker on medium. Grease both plates lightly with ghee. Pour batter, spread evenly. Don't overfill. Cook 5-8 minutes until golden and crisp.", timerSeconds: 390 },
+      { title: "Serve", content: "Remove carefully. Serve hot with curd or mint-coriander chutney.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Sticking fix", text: "If waffles stick: ensure waffle maker is fully preheated, grease generously, and don't open too early. Let them cook until steam stops." },
+      { label: "Egg-free", text: "This recipe uses no egg — besan acts as the binder. Great for toddlers with egg sensitivity." }
+    ],
+  },
+{
+    id: "spinach-paneer-waffles",
+    category: "meals",
+    title: "Spinach Paneer Waffles",
+    description: "Crispy waffles made with boiled potato, paneer, and blanched spinach — toddler-approved. No flour needed.",
+    baseServings: 4, calories: "~120 cal/waffle", totalTime: 25,
+    tags: ["healthy", "no-maida", "vegetarian", "toddler-friendly", "gluten-free"],
+    macros: { protein: 5, carbs: 14, fat: 5 },
+    micronutrients: ["Iron", "Calcium", "Vitamin A", "Potassium"],
+    ingredients: [
+      { name: "Boiled potato, mashed", amount: 1, unit: "cup" },
+      { name: "Paneer, crumbled", amount: 0.5, unit: "cup" },
+      { name: "Blanched spinach, chopped", amount: 0.5, unit: "cup" },
+      { name: "Bread crumbs (whole wheat)", amount: 2, unit: "tbsp" },
+      { name: "Dry mango powder (amchur)", amount: 0.5, unit: "tsp" },
+      { name: "Roasted cumin powder", amount: 0.5, unit: "tsp" },
+      { name: "Red chilli powder", amount: 0.25, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Ghee or oil", amount: 1, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Mix filling", content: "Combine mashed potato, crumbled paneer, chopped blanched spinach, bread crumbs, amchur, roasted cumin, red chilli, and salt. Mix until uniform.", timerSeconds: null },
+      { title: "Cook", content: "Preheat waffle maker. Grease with ghee/oil. Press mixture into waffle plates — spread evenly. Cook 5-7 min until golden and crispy.", timerSeconds: 360 },
+      { title: "Serve", content: "Serve hot with ketchup, green chutney, or curd.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Texture", text: "This is a pressed/moulded waffle (like a tikki in waffle form), not a batter waffle. The potato holds it together." },
+      { label: "Bread crumbs", text: "Use whole wheat bread crumbs for extra fiber. You can blitz dry whole wheat bread in a mixer." }
+    ],
+  },
+{
+    id: "suji-paneer-momos",
+    category: "meals",
+    title: "Suji Paneer Momos (6 Dough Options)",
+    description: "No maida momos with suji dough, paneer filling, chicken option, and red chutney. Includes gluten-free rice flour and wheat-jowar options.",
+    baseServings: 4, calories: "~287 cal/4pcs", totalTime: 45,
+    macros: { protein: "11.6g", carbs: "38.0g", fat: "9.8g" }, microHighlights: ["Calcium", "Vitamin C", "Protein"],
+    variations: [
+      { label: "Suji dough + Paneer (default)", calories: "~287 cal", macros: { protein: "11.6g", carbs: "38.0g", fat: "9.8g" }, microHighlights: ["Calcium", "Vitamin C", "Protein"] },
+      { label: "Whole wheat dough + Paneer", calories: "~232 cal", macros: { protein: "10.1g", carbs: "26.8g", fat: "9.3g" }, microHighlights: ["Calcium", "Vitamin C", "Fiber", "Protein"] },
+      { label: "Wheat + Jowar 70/30 dough + Paneer", calories: "~234 cal", macros: { protein: "10.2g", carbs: "27.3g", fat: "9.4g" }, microHighlights: ["Calcium", "Vitamin C", "Fiber", "Protein"] },
+      { label: "Suji + atta 50/50 + Paneer", calories: "~259 cal", macros: { protein: "10.8g", carbs: "32.4g", fat: "9.6g" }, microHighlights: ["Calcium", "Vitamin C", "Fiber", "Protein"] },
+      { label: "Rice flour dough + Paneer (gluten-free)", calories: "~276 cal", macros: { protein: "11.3g", carbs: "35.8g", fat: "9.7g" }, microHighlights: ["Calcium", "Vitamin C", "Protein"] },
+      { label: "Besan dough + Paneer", calories: "~220 cal", macros: { protein: "9.8g", carbs: "24.5g", fat: "9.2g" }, microHighlights: ["Calcium", "Vitamin C", "Fiber", "Protein"] },
+      { label: "Suji dough + Chicken filling", calories: "~285 cal", macros: { protein: "14.1g", carbs: "37.6g", fat: "8.7g" }, microHighlights: ["Iron", "Vitamin C", "Protein"] }
+    ],
+    tags: ["momos", "paneer", "chicken", "healthy", "high-protein"],
+    ingredients: [
+      { name: "— Suji Dough (default) —", amount: 0, unit: "pcs" },
+      { name: "Suji (semolina)", amount: 1, unit: "cup" },
+      { name: "Hot water", amount: 0.5, unit: "cup" },
+      { name: "Salt", amount: 0.25, unit: "tsp" },
+      { name: "Oil", amount: 1, unit: "tsp" },
+      { name: "— Wheat + Jowar Dough (alternative) —", amount: 0, unit: "pcs" },
+      { name: "Whole wheat atta", amount: 0.7, unit: "cup" },
+      { name: "Jowar flour (sorghum)", amount: 0.3, unit: "cup" },
+      { name: "Hot water", amount: 0.5, unit: "cup" },
+      { name: "Salt", amount: 0.25, unit: "tsp" },
+      { name: "Oil", amount: 1, unit: "tsp" },
+      { name: "— Paneer Filling —", amount: 0, unit: "pcs" },
+      { name: "Paneer (crumbled)", amount: 1, unit: "cup" },
+      { name: "Onion (finely chopped)", amount: 0.5, unit: "cup" },
+      { name: "Capsicum (finely chopped)", amount: 0.25, unit: "cup" },
+      { name: "Green chilli (minced)", amount: 1, unit: "pcs" },
+      { name: "Ginger (grated)", amount: 1, unit: "tsp" },
+      { name: "Soy sauce", amount: 1, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.25, unit: "tsp" },
+      { name: "Fresh coriander", amount: 2, unit: "tbsp" },
+      { name: "— Red Chutney —", amount: 0, unit: "pcs" },
+      { name: "Dry red chillies (soaked)", amount: 6, unit: "pcs" },
+      { name: "Garlic cloves", amount: 4, unit: "pcs" },
+      { name: "Tomato", amount: 1, unit: "pcs" },
+      { name: "Vinegar", amount: 1, unit: "tsp" },
+      { name: "Sugar", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.25, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Make dough", content: "Choose your dough type. Mix flour(s) + salt. Add hot water gradually, knead until smooth and non-cracking (add water a little at a time if it looks sandy or crumbly). Rest 15 min covered with damp cloth. Wheat+jowar dough kneads and behaves similarly to whole wheat, thanks to the wheat's gluten holding it together.", timerSeconds: 900 },
+      { title: "Make filling", content: "Mix all filling ingredients. For chicken version: replace paneer with 1 cup minced chicken + 1 tsp soy sauce + 1 tsp sesame oil.", timerSeconds: null },
+      { title: "Shape momos", content: "Roll small balls into thin circles. Place 1 tbsp filling, fold into pleats. 4 fold styles: classic crescent, round purse, open-top, leaf.", timerSeconds: null },
+      { title: "Steam", content: "Oil steamer tray. Steam momos for 12-15 minutes until dough is glossy and translucent (chicken filling needs 15-18 min).", timerSeconds: 900 },
+      { title: "Red chutney", content: "Blend soaked chillies, garlic, tomato, vinegar, sugar, salt into smooth paste. Adjust heat to taste.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "6 Dough options", text: "1) Suji (default) 2) Whole wheat atta — heavier, nuttier 3) Wheat + Jowar 70/30 — nearly identical calories to plain wheat, but lower glycemic index, more iron/magnesium, and mild flavor (much milder than besan) 4) Suji + atta 50/50 — best balance 5) Rice flour — gluten-free, slightly crumbly, but the least fiber and highest glycemic impact of all 6 6) Besan (chickpea) — highest protein and fiber, lowest calories, but has a distinctive earthy chana flavor some people don't love." },
+      { label: "Chicken version", text: "Replace paneer with 1 cup minced chicken breast. Add 1 tsp sesame oil and extra soy sauce. Steam 15-18 min (longer for raw chicken) — chicken needs to reach 165°F/74°C internally. Use a food thermometer if unsure; visual doneness alone isn't fully reliable for meat." },
+      { label: "Dough tip", text: "Suji and rice flour doughs especially MUST rest 15 min — they need time to absorb water since they have no gluten. If the dough looks sandy, dry, or cracks when folding, it needs more water — knead in a teaspoon at a time until it's smooth and non-crumbly, not just kneading longer." },
+      { label: "Why wheat-based dough is more forgiving", text: "Gluten (present in wheat, absent in suji/rice flour/besan) creates an elastic network that holds dough together even if hydration isn't perfect — this is why wheat and wheat-jowar doughs are less likely to crack, tear, or fail to seal than pure suji, rice flour, or besan doughs." }
+    ],
+  },
+{
+    id: "marinade-achari",
+    category: "marinades",
+    title: "Achari (Pickle) Chicken",
+    description: "Tangy, bold — pickle oil + nigella + fennel seeds. Like eating achaar on chicken.",
+    baseServings: 4, calories: "~230 cal/serving", totalTime: 10,
+    macros: { protein: "16.3g", carbs: "2.8g", fat: "17.0g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Thick curd", amount: 3, unit: "tbsp" },
+      { name: "Pickle oil (achar oil)", amount: 2, unit: "tbsp" },
+      { name: "Ginger-garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Fennel seeds", amount: 1, unit: "tsp" },
+      { name: "Nigella seeds (kalonji)", amount: 1, unit: "tsp" },
+      { name: "Red chili powder", amount: 1, unit: "tbsp" },
+      { name: "Turmeric", amount: 1, unit: "tsp" },
+      { name: "Achari masala", amount: 1.5, unit: "tsp" },
+      { name: "Mustard oil", amount: 1.5, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-afghani",
+    category: "marinades",
+    title: "Afghani Chicken",
+    description: "Ultra rich — cheese + butter + cream. The most decadent marinade.",
+    baseServings: 4, calories: "~379 cal/serving", totalTime: 10,
+    macros: { protein: "21.2g", carbs: "6.2g", fat: "29.9g" }, microHighlights: ["Iron", "Calcium", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Cream", amount: 0.5, unit: "cup" },
+      { name: "Curd", amount: 0.5, unit: "cup" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Melted butter", amount: 3, unit: "tbsp" },
+      { name: "Cheese cubes (processed)", amount: 2, unit: "pcs" },
+      { name: "Black pepper", amount: 1, unit: "tsp" },
+      { name: "Coriander powder", amount: 1, unit: "tbsp" },
+      { name: "Jeera powder", amount: 1, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Chopped coriander", amount: 2, unit: "tbsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-andhra-chilli",
+    category: "marinades",
+    title: "Andhra Chilli Chicken",
+    description: "Spicy + South Indian — curry leaves powder is the signature.",
+    baseServings: 4, calories: "~153 cal/serving", totalTime: 10,
+    macros: { protein: "16.3g", carbs: "2.6g", fat: "8.6g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Curd", amount: 2, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Red chilli powder", amount: 2, unit: "tsp" },
+      { name: "Turmeric", amount: 1, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Pepper powder", amount: 1, unit: "tsp" },
+      { name: "Curry leaves powder", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-bbq",
+    category: "marinades",
+    title: "BBQ Chicken",
+    description: "Sweet-smoky-tangy — great on the grill or in the oven.",
+    baseServings: 4, calories: "~212 cal/serving", totalTime: 10,
+    macros: { protein: "16.9g", carbs: "7.8g", fat: "12.5g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Thick yogurt", amount: 0.5, unit: "cup" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Soya sauce", amount: 1, unit: "tbsp" },
+      { name: "Tomato ketchup", amount: 1, unit: "tbsp" },
+      { name: "Smoked paprika", amount: 1, unit: "tsp" },
+      { name: "Black pepper", amount: 1, unit: "tsp" },
+      { name: "Honey", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Oil", amount: 1, unit: "tbsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-bhatti-murgh",
+    category: "marinades",
+    title: "Bhatti Da Murgh (Smoked Dark)",
+    description: "Highway dhaba classic — dark, smoky, intense. Black salt + roasted cumin + mustard oil. Chef-level.",
+    baseServings: 4, calories: "~269 cal/serving", totalTime: 10,
+    macros: { protein: "17.5g", carbs: "5.5g", fat: "19.7g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Thick hung curd", amount: 0.75, unit: "cup" },
+      { name: "Mustard oil (heated and cooled)", amount: 3, unit: "tbsp" },
+      { name: "Ginger-garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Dark Kashmiri red chilli paste", amount: 1.5, unit: "tbsp" },
+      { name: "Black salt (kala namak)", amount: 1, unit: "tsp" },
+      { name: "Roasted cumin powder", amount: 1.5, unit: "tsp" },
+      { name: "Garam masala powder", amount: 1, unit: "tsp" },
+      { name: "Black cardamom powder", amount: 0.75, unit: "tsp" },
+      { name: "Black peppercorns (coarsely crushed)", amount: 1, unit: "tsp" },
+      { name: "Kasuri methi (roasted and crushed)", amount: 1, unit: "tsp" },
+      { name: "Lemon juice", amount: 1.5, unit: "tbsp" },
+      { name: "Salt", amount: 1.5, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-black-pepper",
+    category: "marinades",
+    title: "Black Pepper Chicken",
+    description: "Pepper-forward — crushed peppercorns + yogurt + roasted cumin. Simple but punchy.",
+    baseServings: 4, calories: "~197 cal/serving", totalTime: 10,
+    macros: { protein: "17.0g", carbs: "4.2g", fat: "12.5g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Yogurt", amount: 0.5, unit: "cup" },
+      { name: "Freshly crushed black peppercorns", amount: 2, unit: "tbsp" },
+      { name: "Ginger paste", amount: 1, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Garam masala", amount: 0.5, unit: "tsp" },
+      { name: "Roasted cumin powder", amount: 1, unit: "tsp" },
+      { name: "Oil", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-buffalo-ranch",
+    category: "marinades",
+    title: "Buffalo Ranch Chicken Skewers",
+    description: "Spicy, tangy, creamy — buffalo hot sauce marinade with a compound ranch butter finish. Irresistible.",
+    baseServings: 4, calories: "~280 cal/serving", totalTime: 25,
+    tags: ["skewers", "spicy", "creamy", "grilled"],
+    macros: { protein: 28, carbs: 2, fat: 14 },
+    micronutrients: ["Protein"],
+    ingredients: [
+      { name: "— Marinade —", amount: 0, unit: "pcs" },
+      { name: "Chicken cubes", amount: 1, unit: "lb" },
+      { name: "Olive oil", amount: 1, unit: "tbsp" },
+      { name: "Buffalo hot sauce", amount: 2, unit: "tbsp" },
+      { name: "Garlic powder", amount: 1, unit: "tbsp" },
+      { name: "Smoked paprika", amount: 0.5, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Onion powder", amount: 1, unit: "tbsp" },
+      { name: "— Buffalo Ranch Butter —", amount: 0, unit: "pcs" },
+      { name: "Butter", amount: 2, unit: "tbsp" },
+      { name: "Buffalo hot sauce", amount: 2.5, unit: "tbsp" },
+      { name: "Ranch seasoning", amount: 1, unit: "tsp" },
+      { name: "Garlic powder", amount: 0.5, unit: "tsp" },
+      { name: "Parsley (garnish)", amount: 1, unit: "tbsp" },
+      { name: "Celery (garnish)", amount: 2, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Marinate", content: "Mix all marinade ingredients. Coat chicken cubes and marinate 30 min to overnight.", timerSeconds: null },
+      { title: "Skewer and cook", content: "Thread onto skewers. Grill, pan-sear, or air fry at 200C for 12-15 min, turning halfway.", timerSeconds: 810 },
+      { title: "Make compound butter", content: "Melt butter, mix in buffalo hot sauce, ranch seasoning, and garlic powder. Drizzle over cooked skewers. Garnish with parsley and celery.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Ranch seasoning", text: "Use store-bought ranch seasoning mix, or make with dried dill, dried parsley, garlic powder, onion powder, and salt." }
+    ],
+  },
+{
+    id: "marinade-butter-chicken",
+    category: "marinades",
+    title: "Butter Chicken",
+    description: "Creamy + Indian — tomato puree + kasuri methi = restaurant flavor.",
+    baseServings: 4, calories: "~154 cal/serving", totalTime: 10,
+    macros: { protein: "16.3g", carbs: "2.9g", fat: "8.6g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Curd", amount: 3, unit: "tbsp" },
+      { name: "Tomato puree", amount: 3, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Turmeric", amount: 0.5, unit: "tsp" },
+      { name: "Red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Kasuri methi", amount: 1, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-cafreal",
+    category: "marinades",
+    title: "Cafreal (Goan Green) Skewers",
+    description: "Goan classic — herby, zesty, smoky. Coriander + green chillies + whole spices. Unique and bold.",
+    baseServings: 4, calories: "~287 cal/serving", totalTime: 10,
+    macros: { protein: "16.7g", carbs: "5.3g", fat: "22.1g" }, microHighlights: ["Iron", "Vitamin C", "Protein", "Vitamin A"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Coriander leaves + tender stalks", amount: 2, unit: "cup" },
+      { name: "Green chillies (destalked)", amount: 6, unit: "pcs" },
+      { name: "Turmeric powder", amount: 1, unit: "tbsp" },
+      { name: "Soy sauce", amount: 0.5, unit: "tsp" },
+      { name: "Oil", amount: 4, unit: "tbsp" },
+      { name: "Cinnamon stick (1 inch)", amount: 1, unit: "pcs" },
+      { name: "Black peppercorns", amount: 1, unit: "tbsp" },
+      { name: "Cloves", amount: 0.5, unit: "tsp" },
+      { name: "Bay leaf", amount: 1, unit: "pcs" },
+      { name: "Cumin seeds", amount: 1, unit: "tsp" },
+      { name: "Lemon juice (2 lemons)", amount: 2, unit: "pcs" },
+      { name: "Ginger root (1 inch)", amount: 1, unit: "pcs" },
+      { name: "Garlic cloves", amount: 9, unit: "pcs" },
+      { name: "Water (if needed)", amount: 2, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-chettinad",
+    category: "marinades",
+    title: "Chettinad Chicken",
+    description: "Bold Tamil Nadu — fennel + black pepper combo is unmistakable.",
+    baseServings: 4, calories: "~152 cal/serving", totalTime: 10,
+    macros: { protein: "16.2g", carbs: "2.5g", fat: "8.6g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Curd", amount: 2, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Chilli powder", amount: 1.5, unit: "tsp" },
+      { name: "Fennel powder", amount: 1, unit: "tsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Black pepper", amount: 1, unit: "tsp" },
+      { name: "Curry leaves", amount: 8, unit: "pcs" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-chicken-panini",
+    category: "marinades",
+    title: "Chicken Panini Skewers",
+    description: "Savory, herbed, crisp, cheesy — marinated chicken alternated with toasted ciabatta cubes on skewers. Italian-inspired.",
+    baseServings: 4, calories: "~300 cal/serving", totalTime: 25,
+    tags: ["skewers", "herbed", "cheesy", "grilled"],
+    macros: { protein: 26, carbs: 18, fat: 10 },
+    micronutrients: ["Protein", "Calcium"],
+    ingredients: [
+      { name: "— Chicken Marinade —", amount: 0, unit: "pcs" },
+      { name: "Chicken cubes", amount: 1, unit: "lb" },
+      { name: "Olive oil", amount: 1, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Garlic powder", amount: 0.5, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Mayonnaise", amount: 1, unit: "tbsp" },
+      { name: "Oregano", amount: 1, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "— Assembly —", amount: 0, unit: "pcs" },
+      { name: "Ciabatta bread cubes", amount: 2, unit: "cup" },
+      { name: "Parmesan cheese (for topping)", amount: 2, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Marinate", content: "Mix all marinade ingredients. Coat chicken cubes and marinate 30 min to overnight.", timerSeconds: null },
+      { title: "Assemble skewers", content: "Thread marinated chicken cubes alternating with ciabatta bread cubes onto skewers.", timerSeconds: null },
+      { title: "Cook", content: "Grill, pan-sear, or air fry at 200C for 12-15 min, turning halfway. The bread cubes will get crispy and absorb the chicken juices.", timerSeconds: 810 },
+      { title: "Finish", content: "Sprinkle with parmesan cheese while hot.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Bread choice", text: "Ciabatta holds up best on skewers — it crisps without crumbling. Day-old bread works even better." },
+      { label: "Whole wheat swap", text: "Use whole wheat bread cubes for a healthier version — slightly denser but still delicious." }
+    ],
+  },
+{
+    id: "marinade-chilli-soy",
+    category: "marinades",
+    title: "Chilli Soy Chicken Skewers",
+    description: "Spicy, savory, juicy — soy sauce and chilli marinade with a hot garlic-ginger glaze. Asian-inspired street food flavor.",
+    baseServings: 4, calories: "~260 cal/serving", totalTime: 25,
+    tags: ["skewers", "spicy", "asian", "grilled"],
+    macros: { protein: 28, carbs: 6, fat: 10 },
+    micronutrients: ["Protein", "Iron"],
+    ingredients: [
+      { name: "— Marinade —", amount: 0, unit: "pcs" },
+      { name: "Chicken cubes", amount: 1, unit: "lb" },
+      { name: "Soy sauce", amount: 1, unit: "tbsp" },
+      { name: "Egg", amount: 1, unit: "pcs" },
+      { name: "Garlic powder", amount: 0.5, unit: "tsp" },
+      { name: "Chilli powder", amount: 0.5, unit: "tsp" },
+      { name: "Cornstarch", amount: 1, unit: "tbsp" },
+      { name: "Salt and pepper", amount: 0.5, unit: "tsp" },
+      { name: "— Chilli Soy Sauce —", amount: 0, unit: "pcs" },
+      { name: "Butter", amount: 1, unit: "tbsp" },
+      { name: "Garlic cloves, chopped", amount: 3, unit: "pcs" },
+      { name: "Ginger, chopped", amount: 1, unit: "tsp" },
+      { name: "Fresh chillies, sliced", amount: 1.5, unit: "pcs" },
+      { name: "Soy sauce", amount: 1, unit: "tbsp" },
+      { name: "Green chilli sauce", amount: 1, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Marinate", content: "Mix all marinade ingredients. Coat chicken cubes and marinate 30 min to overnight. The egg and cornstarch create a crispy coating.", timerSeconds: null },
+      { title: "Skewer and cook", content: "Thread onto skewers. Grill, pan-sear, or air fry at 200C for 12-15 min, turning halfway.", timerSeconds: 810 },
+      { title: "Make chilli soy sauce", content: "Melt butter in a pan. Add garlic, ginger, and fresh chillies — cook 1 min. Add soy sauce and green chilli sauce. Toss cooked skewers in this glaze.", timerSeconds: 60 }
+    ],
+    notes: [
+      { label: "Crispy coating", text: "The egg + cornstarch in the marinade creates a light crust that caramelizes beautifully when cooked." }
+    ],
+  },
+{
+    id: "marinade-chipotle-lime",
+    category: "marinades",
+    title: "Chipotle Lime Chicken Skewers",
+    description: "Zesty, smoky, juicy — chipotle in adobo with lime and honey. Thread onto skewers and grill or air fry.",
+    baseServings: 4, calories: "~220 cal/serving", totalTime: 25,
+    tags: ["skewers", "smoky", "spicy", "grilled"],
+    macros: { protein: 28, carbs: 4, fat: 8 },
+    micronutrients: ["Protein", "Iron"],
+    ingredients: [
+      { name: "Chicken cubes", amount: 1, unit: "lb" },
+      { name: "Olive oil", amount: 1, unit: "tbsp" },
+      { name: "Lime juice", amount: 1, unit: "tbsp" },
+      { name: "Chipotle in adobo, minced", amount: 2, unit: "tsp" },
+      { name: "Cumin", amount: 0.25, unit: "tsp" },
+      { name: "Smoked paprika", amount: 0.75, unit: "tsp" },
+      { name: "Garlic powder", amount: 0.5, unit: "tsp" },
+      { name: "Oregano powder", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Black pepper", amount: 0.25, unit: "tsp" },
+      { name: "Honey", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Marinate", content: "Mix all marinade ingredients. Coat chicken cubes and marinate 30 min to overnight.", timerSeconds: null },
+      { title: "Skewer and cook", content: "Thread onto skewers. Grill, pan-sear, or air fry at 200C for 12-15 min, turning halfway.", timerSeconds: 810 }
+    ],
+    notes: [
+      { label: "Chipotle in adobo", text: "Available canned. Use the peppers minced — they bring smoky heat. Start with 2 tsp, adjust up if you want more kick." }
+    ],
+  },
+{
+    id: "marinade-dum-chicken",
+    category: "marinades",
+    title: "Dum Ka Chicken",
+    description: "Hyderabadi slow-cooked style — yogurt + cashew + fried onion paste. Rich and aromatic.",
+    baseServings: 4, calories: "~288 cal/serving", totalTime: 10,
+    macros: { protein: "26.4g", carbs: "8.3g", fat: "16.5g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken thigh", amount: 1, unit: "lb" },
+      { name: "Yogurt", amount: 0.33, unit: "cup" },
+      { name: "Fried onions", amount: 0.5, unit: "cup" },
+      { name: "Cashew powder/paste", amount: 0.33, unit: "cup" },
+      { name: "Coriander-mint-chilli paste", amount: 2, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Coriander powder", amount: 1.5, unit: "tsp" },
+      { name: "Cumin powder", amount: 1.5, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Turmeric powder", amount: 1, unit: "tsp" },
+      { name: "Chilli powder", amount: 1, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-french-mustard",
+    category: "marinades",
+    title: "French Mustard & Chilli Chicken",
+    description: "French-inspired — Dijon mustard + yogurt + fresh garlic and chillies.",
+    baseServings: 4, calories: "~173 cal/serving", totalTime: 10,
+    macros: { protein: "18.2g", carbs: "3.4g", fat: "9.6g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Chicken (boneless or bone-in)", amount: 1, unit: "lb" },
+      { name: "Dijon mustard", amount: 2.5, unit: "tbsp" },
+      { name: "Yogurt", amount: 2, unit: "tbsp" },
+      { name: "Garlic (finely chopped)", amount: 2, unit: "tbsp" },
+      { name: "Red chilli flakes", amount: 1, unit: "tbsp" },
+      { name: "Green chilli (finely chopped)", amount: 1, unit: "pcs" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-ginger-garlic-65",
+    category: "marinades",
+    title: "Ginger-Garlic 65 Chicken",
+    description: "Restaurant-style Chicken 65 base — heavy ginger-garlic + cornflour coating. Crispy, punchy.",
+    baseServings: 4, calories: "~184 cal/serving", totalTime: 10,
+    macros: { protein: "16.3g", carbs: "3.0g", fat: "11.9g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Ginger-garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Curd", amount: 2, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Kashmiri red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Black pepper powder", amount: 1, unit: "tsp" },
+      { name: "Curry leaves (chopped)", amount: 1, unit: "tbsp" },
+      { name: "Cornflour", amount: 2, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Oil", amount: 1, unit: "tbsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-greek-tzatziki",
+    category: "marinades",
+    title: "Greek Tzatziki & Dill Chicken",
+    description: "Mediterranean — yogurt + cucumber + dill. Fresh, tangy, light.",
+    baseServings: 4, calories: "~224 cal/serving", totalTime: 10,
+    macros: { protein: "19.3g", carbs: "5.2g", fat: "14.0g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Chicken (boneless or bone-in)", amount: 1, unit: "lb" },
+      { name: "Greek yogurt", amount: 1, unit: "cup" },
+      { name: "Cucumber (grated, squeezed)", amount: 0.5, unit: "pcs" },
+      { name: "Dill (chopped)", amount: 2, unit: "tbsp" },
+      { name: "Garlic cloves paste", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Olive oil", amount: 1, unit: "tbsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-hariyali",
+    category: "marinades",
+    title: "Hariyali (Green) Chicken",
+    description: "Fresh, herbaceous, vibrant green. Mint + coriander + green chilli paste.",
+    baseServings: 4, calories: "~184 cal/serving", totalTime: 10,
+    macros: { protein: "16.3g", carbs: "2.8g", fat: "12.0g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Vitamin A", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Fresh coriander leaves", amount: 1, unit: "cup" },
+      { name: "Mint leaves", amount: 0.5, unit: "cup" },
+      { name: "Green chillies", amount: 3, unit: "pcs" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Yogurt", amount: 2, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Cumin powder", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Oil", amount: 1, unit: "tbsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-kadai",
+    category: "marinades",
+    title: "Kadai Chicken",
+    description: "Spicy + aromatic — kadai masala (toasted coriander + red chillies) is the key.",
+    baseServings: 4, calories: "~155 cal/serving", totalTime: 10,
+    macros: { protein: "16.3g", carbs: "3.1g", fat: "8.6g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Curd", amount: 2, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Kadai masala", amount: 1.5, unit: "tsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Capsicum slices", amount: 0.25, unit: "cup" },
+      { name: "Red onion slices", amount: 0.25, unit: "cup" },
+      { name: "Chopped coriander", amount: 2, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-kerala-coconut",
+    category: "marinades",
+    title: "Kerala Coconut Chicken",
+    description: "Mild + flavorful — coconut milk makes it creamy without dairy.",
+    baseServings: 4, calories: "~192 cal/serving", totalTime: 10,
+    macros: { protein: "16.0g", carbs: "1.5g", fat: "13.5g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Coconut milk", amount: 0.5, unit: "cup" },
+      { name: "Pepper powder", amount: 1.5, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Chopped chillies", amount: 2, unit: "pcs" },
+      { name: "Chopped curry leaves + coriander", amount: 2, unit: "tbsp" },
+      { name: "Oil", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-lehsuni",
+    category: "marinades",
+    title: "Lehsuni Tikka (Garlic Red Masala)",
+    description: "Garlic bomb — fried garlic paste + fresh garlic + mustard oil. Red and garlicky.",
+    baseServings: 4, calories: "~250 cal/serving", totalTime: 10,
+    macros: { protein: "17.9g", carbs: "7.2g", fat: "16.6g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Thick hung curd", amount: 0.75, unit: "cup" },
+      { name: "Fried garlic paste (bhuna lahsun)", amount: 3, unit: "tbsp" },
+      { name: "Fresh garlic (minced)", amount: 1.5, unit: "tbsp" },
+      { name: "Mustard oil", amount: 2, unit: "tbsp" },
+      { name: "Ginger-garlic paste", amount: 1.5, unit: "tbsp" },
+      { name: "Kashmiri red chilli powder", amount: 4, unit: "tsp" },
+      { name: "Turmeric powder", amount: 0.5, unit: "tsp" },
+      { name: "Garam masala powder", amount: 1, unit: "tsp" },
+      { name: "Lemon juice", amount: 1.5, unit: "tbsp" },
+      { name: "Kasuri methi", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 2, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-lemon-herb",
+    category: "marinades",
+    title: "Lemon Herb Chicken",
+    description: "Fresh, zesty, bright — Dijon + thyme + coriander. Light Mediterranean vibes.",
+    baseServings: 4, calories: "~278 cal/serving", totalTime: 10,
+    macros: { protein: "16.8g", carbs: "3.1g", fat: "22.1g" }, microHighlights: ["Iron", "Protein", "Healthy Fats"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Chicken", amount: 1, unit: "lb" },
+      { name: "Olive oil", amount: 0.25, unit: "cup" },
+      { name: "Juice of 1 lemon", amount: 1, unit: "pcs" },
+      { name: "Dijon mustard", amount: 1, unit: "tsp" },
+      { name: "Chopped coriander", amount: 3, unit: "tbsp" },
+      { name: "Chopped thyme", amount: 2, unit: "tbsp" },
+      { name: "Garlic cloves (minced)", amount: 4, unit: "pcs" },
+      { name: "Chilli flakes", amount: 0.5, unit: "tsp" },
+      { name: "Oregano", amount: 0.5, unit: "tsp" },
+      { name: "Honey", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Black pepper", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-malai",
+    category: "marinades",
+    title: "Malai (Creamy) Chicken",
+    description: "Mildest — creamy, buttery, no heat. Kid-friendly.",
+    baseServings: 4, calories: "~264 cal/serving", totalTime: 10,
+    macros: { protein: "20.9g", carbs: "3.9g", fat: "18.3g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Hung curd", amount: 0.5, unit: "cup" },
+      { name: "Fresh cream", amount: 0.25, unit: "cup" },
+      { name: "Cashew paste (10-12 soaked cashews)", amount: 2, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Grated cheese", amount: 2, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tsp" },
+      { name: "White pepper", amount: 0.5, unit: "tsp" },
+      { name: "Cardamom powder", amount: 0.5, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" },
+      { name: "Garam masala", amount: 0.25, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-pahadi",
+    category: "marinades",
+    title: "Pahadi Tikka (Herbal Green Masala)",
+    description: "Mountain-style — coriander + mint + spinach + chaat masala. Different from Hariyali (adds spinach and chaat masala).",
+    baseServings: 4, calories: "~243 cal/serving", totalTime: 10,
+    macros: { protein: "17.7g", carbs: "6.1g", fat: "16.4g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Fiber", "Protein", "Vitamin A", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Thick hung curd", amount: 0.75, unit: "cup" },
+      { name: "Fresh coriander leaves", amount: 2, unit: "cup" },
+      { name: "Fresh mint leaves", amount: 1, unit: "cup" },
+      { name: "Green chillies", amount: 4, unit: "pcs" },
+      { name: "Spinach leaves (blanched, for color)", amount: 1, unit: "cup" },
+      { name: "Ginger-garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Mustard oil", amount: 2, unit: "tbsp" },
+      { name: "Roasted cumin powder", amount: 1, unit: "tsp" },
+      { name: "Chaat masala", amount: 1.5, unit: "tsp" },
+      { name: "Lemon juice", amount: 1.5, unit: "tbsp" },
+      { name: "Kasuri methi", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 2, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-pepper-coconut",
+    category: "marinades",
+    title: "Pepper Coconut Chicken",
+    description: "Creamy, spicy, aromatic — coconut milk + crushed pepper + curry leaves. South Indian soul.",
+    baseServings: 4, calories: "~204 cal/serving", totalTime: 10,
+    macros: { protein: "17.1g", carbs: "2.3g", fat: "14.1g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Chicken", amount: 1, unit: "lb" },
+      { name: "Pepper powder", amount: 1.75, unit: "tbsp" },
+      { name: "Coconut milk", amount: 0.5, unit: "cup" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Chopped chillies", amount: 2, unit: "pcs" },
+      { name: "Chopped curry leaves + coriander", amount: 2, unit: "tbsp" },
+      { name: "Oil", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-peri-peri",
+    category: "marinades",
+    title: "Peri Peri Chicken",
+    description: "Portuguese-Indian fusion — fiery, tangy, with blended peppers.",
+    baseServings: 4, calories: "~242 cal/serving", totalTime: 10,
+    macros: { protein: "16.2g", carbs: "3.0g", fat: "18.4g" }, microHighlights: ["Iron", "Vitamin C", "Protein", "Healthy Fats"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Roasted red bell pepper (1 small-medium)", amount: 1, unit: "pcs" },
+      { name: "Roasted red onion (quarter)", amount: 0.25, unit: "pcs" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Red wine vinegar", amount: 1, unit: "tbsp" },
+      { name: "Smoked paprika", amount: 0.5, unit: "tsp" },
+      { name: "Olive oil", amount: 3, unit: "tbsp" },
+      { name: "Dried oregano", amount: 0.25, unit: "tsp" },
+      { name: "African birds eye chilies", amount: 2, unit: "pcs" },
+      { name: "Roasted garlic cloves", amount: 3, unit: "pcs" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Black pepper", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-persian-saffron",
+    category: "marinades",
+    title: "Persian Saffron & Rose Chicken",
+    description: "Elegant Persian — saffron water + rose petals + Kashmiri chilli. Fragrant and beautiful.",
+    baseServings: 4, calories: "~200 cal/serving", totalTime: 10,
+    macros: { protein: "19.6g", carbs: "6.0g", fat: "10.9g" }, microHighlights: ["Iron", "Calcium", "Protein", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Chicken (boneless or bone-in)", amount: 1, unit: "lb" },
+      { name: "Yogurt", amount: 1, unit: "cup" },
+      { name: "Kashmiri red chili powder", amount: 1, unit: "tbsp" },
+      { name: "Saffron-infused water", amount: 4, unit: "tbsp" },
+      { name: "White onion (thinly sliced)", amount: 0.5, unit: "cup" },
+      { name: "Rose water + dry rose petals", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-reshmi",
+    category: "marinades",
+    title: "Reshmi Tikka Chicken",
+    description: "Silky smooth — cashew paste + cream + white pepper. The most delicate tikka.",
+    baseServings: 4, calories: "~276 cal/serving", totalTime: 10,
+    macros: { protein: "19.5g", carbs: "4.8g", fat: "19.9g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Hung curd", amount: 0.75, unit: "cup" },
+      { name: "Cashew paste (soaked)", amount: 2, unit: "tbsp" },
+      { name: "Fresh cream", amount: 0.25, unit: "cup" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "White pepper powder", amount: 0.5, unit: "tsp" },
+      { name: "Cumin powder", amount: 0.5, unit: "tsp" },
+      { name: "Garam masala", amount: 0.5, unit: "tsp" },
+      { name: "Cardamom powder", amount: 1, unit: "tsp" },
+      { name: "Kasuri methi (crushed)", amount: 1, unit: "tsp" },
+      { name: "Mustard oil", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-roasted-garlic-yogurt",
+    category: "marinades",
+    title: "Roasted Garlic Yogurt Chicken",
+    description: "Rich and savoury — whole roasted garlic bulb + Greek yogurt + herbs. Mellow, deep garlic flavor.",
+    baseServings: 4, calories: "~202 cal/serving", totalTime: 10,
+    macros: { protein: "17.5g", carbs: "4.3g", fat: "12.8g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Chicken", amount: 1, unit: "lb" },
+      { name: "Whole roasted garlic bulb (squeezed)", amount: 1, unit: "pcs" },
+      { name: "Greek yogurt", amount: 0.5, unit: "cup" },
+      { name: "Sliced garlic", amount: 1, unit: "tbsp" },
+      { name: "Olive oil", amount: 1, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tsp" },
+      { name: "Honey", amount: 1, unit: "tsp" },
+      { name: "Oregano", amount: 1, unit: "tsp" },
+      { name: "Chopped cilantro", amount: 0.25, unit: "cup" },
+      { name: "Paprika", amount: 1, unit: "tsp" },
+      { name: "Pepper", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-shawarma",
+    category: "marinades",
+    title: "Shawarma Chicken",
+    description: "Middle Eastern — warm, garlicky, juicy. Tomato paste + cumin + oregano.",
+    baseServings: 4, calories: "~218 cal/serving", totalTime: 10,
+    macros: { protein: "17.0g", carbs: "2.6g", fat: "15.5g" }, microHighlights: ["Iron", "Vitamin C", "Protein", "Healthy Fats"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Chicken", amount: 1, unit: "lb" },
+      { name: "Tomato paste", amount: 1.5, unit: "tbsp" },
+      { name: "Olive oil", amount: 2, unit: "tbsp" },
+      { name: "Oregano", amount: 1.5, unit: "tsp" },
+      { name: "Onion powder", amount: 0.5, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Cumin", amount: 1, unit: "tsp" },
+      { name: "Garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Red chilli flakes", amount: 0.75, unit: "tsp" },
+      { name: "Paprika", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-singapore-laksa",
+    category: "marinades",
+    title: "Singapore Laksa Chicken",
+    description: "Southeast Asian — laksa paste + coconut via sesame oil. Turmeric-forward, aromatic.",
+    baseServings: 4, calories: "~206 cal/serving", totalTime: 10,
+    macros: { protein: "18.1g", carbs: "4.5g", fat: "12.8g" }, microHighlights: ["Iron", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Chicken (thighs or breast)", amount: 1, unit: "lb" },
+      { name: "Laksa paste", amount: 2, unit: "tbsp" },
+      { name: "Soy sauce", amount: 1, unit: "tbsp" },
+      { name: "Fish sauce", amount: 1, unit: "tbsp" },
+      { name: "Lime juice", amount: 1, unit: "tbsp" },
+      { name: "Brown sugar", amount: 1, unit: "tsp" },
+      { name: "Turmeric powder", amount: 1, unit: "tsp" },
+      { name: "Ginger-garlic paste", amount: 1, unit: "tsp" },
+      { name: "Sesame oil", amount: 1, unit: "tbsp" },
+      { name: "Chili flakes (optional)", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-tandoori",
+    category: "marinades",
+    title: "Tandoori Chicken",
+    description: "The OG — smoky, tangy, vibrant red. Classic Indian grilled chicken.",
+    baseServings: 4, calories: "~215 cal/serving", totalTime: 10,
+    macros: { protein: "16.4g", carbs: "2.9g", fat: "15.4g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Thick curd", amount: 3, unit: "tbsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Ginger garlic paste", amount: 1, unit: "tbsp" },
+      { name: "Garam masala", amount: 1.5, unit: "tsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Turmeric", amount: 1, unit: "tsp" },
+      { name: "Cumin powder", amount: 1, unit: "tsp" },
+      { name: "Mustard oil", amount: 2, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Chopped coriander", amount: 2, unit: "tbsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-teriyaki",
+    category: "marinades",
+    title: "Teriyaki Chicken",
+    description: "Japanese-inspired — soy + worcestershire + sugar glaze. Sweet, savory, umami.",
+    baseServings: 4, calories: "~206 cal/serving", totalTime: 10,
+    macros: { protein: "20.9g", carbs: "5.9g", fat: "11.0g" }, microHighlights: ["Iron", "Protein"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken thigh", amount: 1, unit: "lb" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Soy sauce", amount: 0.33, unit: "cup" },
+      { name: "Worcestershire sauce", amount: 2, unit: "tbsp" },
+      { name: "Water", amount: 0.25, unit: "cup" },
+      { name: "Black pepper", amount: 1, unit: "tsp" },
+      { name: "Sugar", amount: 1.5, unit: "tsp" },
+      { name: "Garlic powder", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "marinade-zafrani",
+    category: "marinades",
+    title: "Zafrani (Saffron) Chicken",
+    description: "The most royal — saffron + cashew-onion paste. Mughlai elegance.",
+    baseServings: 4, calories: "~392 cal/serving", totalTime: 10,
+    macros: { protein: "23.7g", carbs: "22.2g", fat: "23.1g" }, microHighlights: ["Iron", "Calcium", "Protein", "Healthy Fats"],
+    tags: ["chicken", "marinade", "high-protein"],
+    ingredients: [
+      { name: "Boneless chicken", amount: 1, unit: "lb" },
+      { name: "Dahi", amount: 1, unit: "cup" },
+      { name: "Fresh cream", amount: 0.5, unit: "cup" },
+      { name: "Ginger garlic paste", amount: 2, unit: "tbsp" },
+      { name: "Fried onions (blended)", amount: 2, unit: "pcs" },
+      { name: "Soaked cashews (blended)", amount: 10, unit: "pcs" },
+      { name: "Saffron milk", amount: 2, unit: "tbsp" },
+      { name: "Coriander powder", amount: 1, unit: "tsp" },
+      { name: "Red chilli powder", amount: 1, unit: "tsp" },
+      { name: "Turmeric", amount: 1, unit: "tsp" },
+      { name: "Jeera powder", amount: 1, unit: "tsp" },
+      { name: "Garam masala", amount: 1, unit: "tsp" },
+      { name: "Chaat masala", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Marinate", content: "Mix all ingredients, coat chicken evenly, refrigerate 2+ hours (overnight best). Grill, bake 425°F 20 min, pan-fry, or air fry 400°F 15 min.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "bread-homemade-uncooked-rotis",
+    category: "breads",
+    title: "Homemade Uncooked Rotis (Freezer Stock)",
+    description: "Make and store uncooked rotis at home — roll, stack, freeze. Ready to cook fresh on any busy night. Lasts 2-3 months in freezer.",
+    baseServings: 12, calories: "~100 cal/roti", totalTime: 30,
+    tags: ["meal-prep", "freezer-friendly", "batch-cooking", "flatbread"],
+    macros: { protein: 3, carbs: 20, fat: 2 },
+    micronutrients: ["Fiber", "Iron"],
+    ingredients: [
+      { name: "Whole wheat flour (atta)", amount: 2, unit: "cup" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Oil or ghee", amount: 2, unit: "tbsp" },
+      { name: "White vinegar", amount: 1, unit: "tsp" },
+      { name: "Warm water", amount: 0.75, unit: "cup" },
+      { name: "Extra atta (for dusting)", amount: 0.25, unit: "cup" }
+    ],
+    steps: [
+      { title: "Make dough", content: "Mix atta, salt, oil/ghee, and vinegar. Add warm water gradually and knead into a soft, slightly oily dough — smoother than your regular roti dough. The extra oil and vinegar are key for preventing cracks during storage.", timerSeconds: null },
+      { title: "Rest", content: "Cover and rest 10-15 min.", timerSeconds: 900 },
+      { title: "Roll all rotis", content: "Divide into 12 balls. Roll each into a thin roti (about 6-7 inches), dusting with atta. Do NOT cook them.", timerSeconds: null },
+      { title: "Stack with parchment", content: "Place a square of parchment paper (or butter paper) between each uncooked roti. Stack them neatly.", timerSeconds: null },
+      { title: "Wrap and store", content: "Place the entire stack in a large ziplock bag. Press out all air. Label with date. Store flat in freezer.", timerSeconds: null },
+      { title: "Cook from frozen", content: "When ready to eat: pull out as many rotis as needed (they separate easily when frozen). Cook directly on a hot tawa — no thawing needed. Cook 1-2 min per side, apply ghee.", timerSeconds: 120 }
+    ],
+    notes: [
+      { label: "Why extra oil", text: "1 extra tbsp oil per cup of flour (more than regular roti dough) prevents the rotis from drying and cracking during storage." },
+      { label: "Why vinegar", text: "1/2 tsp vinegar per cup flour is a natural preservative AND keeps rotis pliable. It's the closest homemade trick to what commercial tortillas use (minus the chemicals)." },
+      { label: "Storage life", text: "Fridge: 3-5 days. Freezer: 2-3 months. Won't match Costco uncooked tortillas (they use calcium propionate + vacuum seal), but freezer gets you close." },
+      { label: "Cook from frozen", text: "No thawing needed — place frozen roti directly on a hot tawa. It actually cooks better this way because the steam from the ice crystals helps it puff." },
+      { label: "Batch tip", text: "Make a double batch (24 rotis) on a weekend. Takes 45 min of rolling but saves cooking time all month." }
+    ],
+  },
+{
+    id: "indian-breads",
+    category: "breads",
+    title: "Indian Breads (6 Varieties)",
+    description: "Roti, paratha, naan, kulcha, puri, bhatura — each with its own dough, stuffing (where relevant), and method. Oven tandoori method for naan/kulcha.",
+    baseServings: 4, calories: "~982 cal/roti", totalTime: 40,
+    macros: { protein: "27.5g", carbs: "166.8g", fat: "22.7g" }, microHighlights: ["Calcium", "Vitamin C", "Fiber", "Protein", "Potassium"],
+    variations: [
+      { label: "Roti", calories: "~230 cal", macros: { protein: "5.8g", carbs: "40.8g", fat: "4.8g" }, microHighlights: ["Fiber"] },
+      { label: "Paratha", calories: "~290 cal", macros: { protein: "6.4g", carbs: "41.4g", fat: "11.0g" }, microHighlights: ["Fiber"] },
+      { label: "Naan", calories: "~260 cal", macros: { protein: "6.3g", carbs: "41.5g", fat: "7.6g" }, microHighlights: ["Calcium", "Fiber", "Protein", "Potassium"] },
+      { label: "Kulcha", calories: "~264 cal", macros: { protein: "6.4g", carbs: "42.3g", fat: "7.7g" }, microHighlights: ["Calcium", "Fiber", "Protein", "Potassium"] },
+      { label: "Puri (deep-fried)", calories: "~290 cal", macros: { protein: "5.5g", carbs: "40.5g", fat: "11.8g" }, microHighlights: ["Fiber"] },
+      { label: "Bhatura (deep-fried)", calories: "~328 cal", macros: { protein: "5.7g", carbs: "42.0g", fat: "15.3g" }, microHighlights: ["Calcium", "Fiber", "Protein", "Potassium"] }
+    ],
+    tags: ["bread", "Indian", "roti", "naan", "paratha", "kulcha", "puri", "bhatura"],
+    ingredients: [
+      { name: "— Roti / Paratha Dough —", amount: 0, unit: "pcs" },
+      { name: "Whole wheat atta", amount: 2, unit: "cup" },
+      { name: "Water (warm)", amount: 0.75, unit: "cup" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Ghee (for roti, brushed on)", amount: 1, unit: "tbsp" },
+      { name: "Extra ghee (for paratha layering)", amount: 2, unit: "tbsp" },
+      { name: "— Naan / Kulcha Dough —", amount: 0, unit: "pcs" },
+      { name: "Maida (or 50/50 atta-maida)", amount: 2, unit: "cup" },
+      { name: "Yogurt", amount: 2, unit: "tbsp" },
+      { name: "Baking powder", amount: 0.5, unit: "tsp" },
+      { name: "Water (as needed)", amount: 0.5, unit: "cup" },
+      { name: "Butter (for brushing)", amount: 1, unit: "tbsp" },
+      { name: "— Kulcha Stuffing —", amount: 0, unit: "pcs" },
+      { name: "Potato (boiled, mashed)", amount: 0.5, unit: "cup" },
+      { name: "Onion (finely chopped)", amount: 2, unit: "tbsp" },
+      { name: "Green chilli (minced)", amount: 1, unit: "pcs" },
+      { name: "Fresh coriander (chopped)", amount: 1, unit: "tbsp" },
+      { name: "Ajwain (carom seeds)", amount: 0.25, unit: "tsp" },
+      { name: "Salt", amount: 0.25, unit: "tsp" },
+      { name: "— Puri Dough —", amount: 0, unit: "pcs" },
+      { name: "Whole wheat atta", amount: 1, unit: "cup" },
+      { name: "Water", amount: 0.4, unit: "cup" },
+      { name: "Salt", amount: 0.25, unit: "tsp" },
+      { name: "Oil (in dough)", amount: 1, unit: "tsp" },
+      { name: "Oil (for deep-frying, absorbed)", amount: 3, unit: "tbsp" },
+      { name: "— Bhatura Dough —", amount: 0, unit: "pcs" },
+      { name: "All-purpose flour (maida)", amount: 1, unit: "cup" },
+      { name: "Yogurt", amount: 2, unit: "tbsp" },
+      { name: "Sugar", amount: 1, unit: "tsp" },
+      { name: "Baking soda", amount: 0.25, unit: "tsp" },
+      { name: "Salt", amount: 0.25, unit: "tsp" },
+      { name: "Water (as needed)", amount: 0.25, unit: "cup" },
+      { name: "Oil (for deep-frying, absorbed)", amount: 4, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Knead roti/paratha dough", content: "Mix atta + salt. Add warm water gradually, knead 8-10 min until smooth and soft. Rest 20 min covered.", timerSeconds: 1200 },
+      { title: "Roti", content: "Divide into balls. Roll thin and round. Cook on hot tawa — flip when bubbles appear, press with cloth to puff. Brush ghee.", timerSeconds: null },
+      { title: "Paratha", content: "Roll ball, brush ghee/oil, fold in half, fold again into triangle. Roll out. Cook on tawa with ghee on both sides until golden and flaky.", timerSeconds: null },
+      { title: "Oven Tandoori Naan", content: "Mix maida with yogurt and baking powder, knead into a soft dough with water as needed, rest 30 min. Roll oval, brush water on one side, place wet-side down on preheated baking sheet at 500°F. Broil 2-3 min. Brush butter.", timerSeconds: 180 },
+      { title: "Make kulcha stuffing", content: "Mix mashed potato, onion, green chilli, coriander, ajwain, and salt into a dry, well-combined filling.", timerSeconds: null },
+      { title: "Shape and cook kulcha", content: "Use naan dough. Flatten a ball, place 1-2 tbsp stuffing in center, seal edges, gently flatten again without letting filling burst out. Cook using the same oven tandoori method as naan, or pan-cook on a hot tawa with a lid, flipping once, brushing with butter.", timerSeconds: 240 },
+      { title: "Make and fry puri", content: "Knead a stiff dough with atta, water, salt, and 1 tsp oil (stiffer than roti dough). Rest 15 min. Roll small rounds (3-4 inch). Deep-fry in hot oil (350-375°F), pressing gently with a slotted spoon until it puffs, flip once, fry until light golden. Drain on paper towels.", timerSeconds: 900 },
+      { title: "Make and ferment bhatura dough", content: "Mix maida, yogurt, sugar, baking soda, and salt. Knead into a soft dough with water as needed. Cover and rest 3-4 hours (or overnight in the fridge) to ferment slightly — dough should look slightly puffy.", timerSeconds: 14400 },
+      { title: "Roll and fry bhatura", content: "Divide into balls, roll into ovals slightly thicker than puri. Deep-fry in hot oil, pressing gently until it puffs up large, flip once, fry until golden. Drain on paper towels.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "6 bread types", text: "1) Roti — plain, puffed on flame 2) Paratha — layered, flaky with ghee 3) Naan — leavened, tandoor/oven 4) Kulcha — stuffed naan-style bread 5) Puri — deep fried, puffs up, eaten fresh and hot 6) Bhatura — fermented, deep fried, larger and puffier than puri, classic with chole." },
+      { label: "Oven tandoori method", text: "Preheat oven to max (500°F/260°C) with a baking sheet inside for 15 min. Wet one side of naan/kulcha, slap wet-side onto the hot sheet. Broil 2-3 min until charred spots appear. Works great without a tandoor." },
+      { label: "Fried breads (puri/bhatura)", text: "Oil temperature matters — too cool and they absorb excess oil and turn greasy/dense; too hot and they brown before puffing. Test with a small dough pinch: it should rise to the surface within 3-4 seconds." },
+      { label: "Calorie note on fried breads", text: "Puri and bhatura's calorie/fat numbers reflect oil absorbed during frying, which is a bigger swing factor than the dough itself — well-tempered oil at the right heat absorbs noticeably less oil than oil that's too cool." }
+    ],
+  },
+{
+    id: "bread-makhana-naan",
+    category: "breads",
+    title: "Makhana Naan (No Maida)",
+    description: "Soft, nutty flatbread made with makhana powder, poha, yogurt, and atta — calcium-rich, no maida. Thicker than a regular naan but beautifully soft inside.",
+    baseServings: 6, calories: "~140 cal/naan", totalTime: 40,
+    tags: ["healthy", "no-maida", "calcium-rich", "flatbread"],
+    macros: { protein: 5, carbs: 22, fat: 4 },
+    micronutrients: ["Calcium", "Iron", "Fiber", "Protein"],
+    ingredients: [
+      { name: "Whole wheat flour (atta)", amount: 1, unit: "cup" },
+      { name: "Makhana (fox nuts), ground to powder", amount: 0.25, unit: "cup" },
+      { name: "Poha (flattened rice), soaked and mashed", amount: 0.25, unit: "cup" },
+      { name: "Sooji (semolina)", amount: 2, unit: "tbsp" },
+      { name: "Yogurt", amount: 0.25, unit: "cup" },
+      { name: "Warm water", amount: 0.25, unit: "cup" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Baking powder", amount: 0.5, unit: "tsp" },
+      { name: "Baking soda", amount: 0.25, unit: "tsp" },
+      { name: "Oil or ghee", amount: 1, unit: "tbsp" },
+      { name: "Ghee (for cooking)", amount: 1, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Prep makhana and poha", content: "Dry roast makhana for 2-3 min until crisp, then grind to a fine powder in a mixer. Separately, soak poha in water for 5 min, then drain and mash with a fork.", timerSeconds: 300 },
+      { title: "Mix dough", content: "In a bowl, combine atta, makhana powder, mashed poha, sooji, salt, baking powder, and baking soda. Add yogurt, oil/ghee, and warm water gradually. Knead into a soft, pliable dough — not sticky. Add water only if needed.", timerSeconds: null },
+      { title: "Rest", content: "Cover the dough and rest for 15-20 minutes. The sooji and poha will hydrate further, making it easier to roll.", timerSeconds: 1200 },
+      { title: "Roll", content: "Divide into 6 equal balls. Roll each into a thick oval (about 5-6 inches). Don't roll too thin — these are meant to be thicker than regular naan due to the makhana.", timerSeconds: null },
+      { title: "Cook", content: "Heat a tawa on high. Place naan on dry tawa, cook 1-2 min until bubbles appear on top. Flip and cook other side. Apply ghee. For char, hold briefly over open flame with tongs.", timerSeconds: 120 },
+      { title: "Serve", content: "Serve warm with any curry, dal, or just butter.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Flour ratio", text: "Keep atta at 60%+ of total dry mix. Makhana and poha have zero gluten — too much and the naan cracks when rolling. The atta provides all the structure." },
+      { label: "Why makhana", text: "Makhana is one of the richest plant sources of calcium. Combined with yogurt, each naan delivers a significant calcium boost — great for growing kids." },
+      { label: "Sooji role", text: "Sooji adds a light crunch to the surface and helps absorb moisture from the makhana/poha. Don't skip it." },
+      { label: "Tandoor effect", text: "After tawa cooking, hold the naan 3-4 inches above a direct flame for 5-10 seconds per side. This gives authentic charred spots." }
+    ],
+  },
+{
+    id: "bread-dosa-batter",
+    category: "breads",
+    title: "Multi-Dal Dosa Batter (2 Variations)",
+    description: "Rice + four dals + poha for extra crispness and tang — with a yogurt variation for faster fermentation and a classic no-yogurt version.",
+    baseServings: 20, calories: "~101 cal/dosa", totalTime: 30,
+    macros: { protein: "3.5g", carbs: "19.3g", fat: "1.1g" }, microHighlights: ["Iron", "Calcium", "Fiber", "Protein", "Potassium"],
+    variations: [
+      { label: "No Yogurt", calories: "~97 cal", macros: { protein: "3.3g", carbs: "18.9g", fat: "0.9g" }, microHighlights: ["Iron", "Fiber", "Protein"] },
+      { label: "With Yogurt", calories: "~101 cal", macros: { protein: "3.5g", carbs: "19.3g", fat: "1.1g" }, microHighlights: ["Iron", "Calcium", "Fiber", "Protein", "Potassium"] }
+    ],
+    tags: ["dosa", "south-indian", "fermented", "batter", "gluten-free"],
+    ingredients: [
+      { name: "Rice (basmati or sona masoori, soaked)", amount: 2, unit: "cup" },
+      { name: "Urad dal (yellow)", amount: 0.25, unit: "cup" },
+      { name: "Moong dal", amount: 0.25, unit: "cup" },
+      { name: "Masoor dal", amount: 0.25, unit: "cup" },
+      { name: "Toor dal", amount: 0.25, unit: "cup" },
+      { name: "Poha (flattened rice)", amount: 0.33, unit: "cup" },
+      { name: "Methi seeds (fenugreek)", amount: 1, unit: "tbsp" },
+      { name: "Salt (add after fermentation)", amount: 1, unit: "tsp" },
+      { name: "— Yogurt Variation —", amount: 0, unit: "pcs" },
+      { name: "Plain yogurt (add before grinding)", amount: 0.5, unit: "cup" }
+    ],
+    steps: [
+      { title: "Soak", content: "Soak rice, all four dals, poha, and methi seeds together in plenty of water for 4-6 hours (or overnight).", timerSeconds: null },
+      { title: "Grind", content: "Drain and grind to a smooth, slightly grainy batter, adding water gradually. For the yogurt variation, add the yogurt in during grinding instead of some water.", timerSeconds: null },
+      { title: "Ferment", content: "Transfer to a large bowl (batter will rise), cover, and leave in a warm spot 8-12 hours or overnight until bubbly and doubled in volume.", timerSeconds: null },
+      { title: "Add salt and cook", content: "Stir in salt after fermentation (adding before can slow fermentation). Heat a tawa, pour a ladle of batter, spread thin in a circle. Drizzle oil/ghee around edges, cook until golden and crisp, flip briefly if needed.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Yogurt vs. no yogurt", text: "Yogurt variation: ferments faster (6-8 hrs vs 8-12) and gives a tangier flavor — useful in colder weather when natural fermentation is slow, or if you're short on time. No-yogurt version: relies purely on wild fermentation, slightly more neutral flavor, needs a warmer spot to rise reliably." },
+      { label: "Why four dals", text: "Urad dal is the classic base for dosa's texture (high protein, binds well when fermented). Moong, masoor, and toor add extra protein and a slightly different crumb — more nutty, less purely urad-tasting than a traditional single-dal batter." },
+      { label: "Poha's role", text: "Poha (flattened rice) is pre-gelatinized, so it helps the batter turn soft and slightly chewy rather than purely crisp-brittle. It's a common trick for softer dosas." },
+      { label: "Methi seeds", text: "Small amount, but does two jobs: encourages fermentation (natural yeasts favor it) and gives a faint golden-brown tint to the cooked dosa." },
+      { label: "Storage", text: "Fermented batter keeps in the fridge 4-5 days. Batter thickens as it sits — thin with a splash of water before using." },
+      { label: "Calorie note", text: "Calculated from standard ingredient values, not a lab test. Number is for the batter alone — pan oil/ghee adds roughly 15-20 more kcal per dosa depending on how much you use." }
+    ],
+  },
+{
+    id: "masala-advieh",
+    category: "masalas",
+    title: "Advieh (Persian Spice Blend)",
+    description: "The perfume of Persia — rose petals, cinnamon, cardamom. Fragrance over heat.",
+    baseServings: 1, calories: "~5 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "0.8g", fat: "0.1g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Cinnamon", amount: 2, unit: "pcs" },
+      { name: "Cumin seeds", amount: 2, unit: "tbsp" },
+      { name: "Cardamom", amount: 6, unit: "pcs" },
+      { name: "Turmeric", amount: 1, unit: "tsp" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Nutmeg (grated)", amount: 0.25, unit: "tsp" },
+      { name: "Ginger powder", amount: 1, unit: "tsp" },
+      { name: "Dried Damask rose petals", amount: 2, unit: "tbsp" },
+      { name: "Saffron threads (optional)", amount: 1, unit: "pinch" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-bafat",
+    category: "masalas",
+    title: "Bafat Masala (Mangalore)",
+    description: "Mangalorean Catholic spice blend — for pork, chicken, beef curries, vindaloo-style.",
+    baseServings: 1, calories: "~7 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "1.1g", fat: "0.1g" }, microHighlights: [],
+    variations: [
+      { label: "Standard", calories: "~7 cal", macros: { protein: "0.3g", carbs: "1.1g", fat: "0.1g" }, microHighlights: [] },
+      { label: "Milder (less chilli)", calories: "~7 cal", macros: { protein: "0.2g", carbs: "1.1g", fat: "0.1g" }, microHighlights: [] }
+    ],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Cumin seeds", amount: 2, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 3, unit: "tbsp" },
+      { name: "Dried red chillies", amount: 10, unit: "pcs" },
+      { name: "Cloves", amount: 6, unit: "pcs" },
+      { name: "Green cardamom", amount: 4, unit: "pcs" },
+      { name: "Black peppercorns", amount: 1, unit: "tbsp" },
+      { name: "Cinnamon", amount: 2, unit: "pcs" },
+      { name: "Turmeric", amount: 1, unit: "tsp" },
+      { name: "Mustard seeds", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [
+      { label: "🌶️ Prefer less heat?", text: "This is one of the spicier blends. For a milder version, cut the dried red chillies to about 6 (swap a couple for Kashmiri chillies to keep the color). Everything else stays the same." }
+    ],
+  },
+{
+    id: "masala-biryani",
+    category: "masalas",
+    title: "Biryani Masala",
+    description: "For chicken/mutton/veg biryani — aromatic, not spicy.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "0.9g", fat: "0.1g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tsp" },
+      { name: "Black peppercorns", amount: 1, unit: "tsp" },
+      { name: "Green cardamom", amount: 6, unit: "pcs" },
+      { name: "Black cardamom", amount: 2, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 5, unit: "pcs" },
+      { name: "Bay leaf", amount: 2, unit: "pcs" },
+      { name: "Star anise", amount: 1, unit: "pcs" },
+      { name: "Mace (Javitri)", amount: 1, unit: "pcs" },
+      { name: "Nutmeg (small piece)", amount: 1, unit: "pcs" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-chaat",
+    category: "masalas",
+    title: "Chaat Masala",
+    description: "For fruit chaat, samosas, chole tikki, dahi puri, roasted corn.",
+    baseServings: 1, calories: "~4 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "0.7g", fat: "0.1g" }, microHighlights: ["Vitamin C", "Vitamin A"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Cumin seeds", amount: 2, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 1, unit: "tbsp" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tbsp" },
+      { name: "Dry red chilli", amount: 3, unit: "pcs" },
+      { name: "Carom seeds (ajwain)", amount: 1, unit: "tsp" },
+      { name: "Cinnamon (half inch)", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 3, unit: "pcs" },
+      { name: "Dry mango powder (amchur)", amount: 2, unit: "tbsp" },
+      { name: "Black salt", amount: 2, unit: "tbsp" },
+      { name: "Salt", amount: 1, unit: "tbsp" },
+      { name: "Ginger powder", amount: 1, unit: "tsp" },
+      { name: "Asafoetida", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-chettinad",
+    category: "masalas",
+    title: "Chettinad Masala (Tamil Nadu)",
+    description: "Bold Chettinad flavors — fennel + star anise + black pepper. For chicken, mutton, egg curry.",
+    baseServings: 1, calories: "~7 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "1.1g", fat: "0.2g" }, microHighlights: ["Iron"],
+    variations: [
+      { label: "Standard", calories: "~7 cal", macros: { protein: "0.3g", carbs: "1.1g", fat: "0.2g" }, microHighlights: ["Iron"] },
+      { label: "Milder (less chilli)", calories: "~7 cal", macros: { protein: "0.2g", carbs: "1.0g", fat: "0.2g" }, microHighlights: ["Iron"] }
+    ],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Fennel seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Black pepper", amount: 1, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Star anise", amount: 2, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Dried red chillies", amount: 6, unit: "pcs" },
+      { name: "Poppy seeds", amount: 1, unit: "tsp" },
+      { name: "Bay leaf", amount: 2, unit: "pcs" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [
+      { label: "🌶️ Prefer less heat?", text: "This is one of the spicier blends. For a milder version, cut the dried red chillies to about 4. Everything else stays the same." }
+    ],
+  },
+{
+    id: "masala-chole",
+    category: "masalas",
+    title: "Chole Masala",
+    description: "For chana/chole — pomegranate seeds add tartness.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: ["Vitamin C", "Vitamin A"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Dried red chilli", amount: 2, unit: "pcs" },
+      { name: "Black cardamom", amount: 1, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tsp" },
+      { name: "Dry mango powder", amount: 1, unit: "tsp" },
+      { name: "Pomegranate seeds (dried)", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "podi-curry-leaf",
+    category: "masalas",
+    title: "Curry Leaf Podi",
+    description: "Most aromatic — intense curry leaf flavor. For rice, idli, dosa.",
+    baseServings: 1, calories: "~2 cal/tsp", totalTime: 15,
+    macros: { protein: "0.1g", carbs: "0.2g", fat: "0.1g" }, microHighlights: ["Iron", "Fiber", "Protein"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Fresh curry leaves (dried in pan)", amount: 2, unit: "cup" },
+      { name: "Urad dal", amount: 0.25, unit: "cup" },
+      { name: "Black pepper", amount: 1, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tsp" },
+      { name: "Red chilies", amount: 3, unit: "pcs" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Ginger powder", amount: 0.5, unit: "tsp" },
+      { name: "Oil", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-dal",
+    category: "masalas",
+    title: "Dal Masala",
+    description: "For tadka dal, toor dal, moong dal — garlic and curry leaves twist.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Dried garlic cloves", amount: 5, unit: "pcs" },
+      { name: "Dry red chilli", amount: 2, unit: "pcs" },
+      { name: "Turmeric (raw)", amount: 0.5, unit: "tsp" },
+      { name: "Asafoetida (hing)", amount: 0.25, unit: "tsp" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tsp" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 3, unit: "pcs" },
+      { name: "Curry leaves (dried)", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-garam",
+    category: "masalas",
+    title: "Garam Masala",
+    description: "The king of Indian spice blends. Add at the end to finish curries, biryanis, marinades, chai.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Cumin seeds", amount: 2, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Black cardamom", amount: 2, unit: "pcs" },
+      { name: "Green cardamom", amount: 4, unit: "pcs" },
+      { name: "Cinnamon (1 inch)", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 6, unit: "pcs" },
+      { name: "Black peppercorns", amount: 1, unit: "tsp" },
+      { name: "Bay leaf", amount: 2, unit: "pcs" },
+      { name: "Nutmeg (small piece)", amount: 1, unit: "pcs" },
+      { name: "Mace (Javitri)", amount: 1, unit: "pcs" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-goda",
+    category: "masalas",
+    title: "Goda Masala (Maharashtrian)",
+    description: "Warm, nutty, subtly sweet. For masale bhaat, bharli vangi, usal.",
+    baseServings: 1, calories: "~8 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "0.9g", fat: "0.4g" }, microHighlights: ["Iron", "Calcium", "Fiber", "Healthy Fats"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Poppy seeds", amount: 1, unit: "tbsp" },
+      { name: "Sesame seeds", amount: 1, unit: "tbsp" },
+      { name: "Dry coconut (grated)", amount: 2, unit: "tbsp" },
+      { name: "Dried red chilli", amount: 2, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tsp" },
+      { name: "Mace (Javitri)", amount: 1, unit: "pcs" },
+      { name: "Dagad phool (optional)", amount: 1, unit: "tsp" },
+      { name: "Bay leaf (optional)", amount: 2, unit: "pcs" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "podi-gunpowder",
+    category: "masalas",
+    title: "Gunpowder / Idli Podi",
+    description: "South Indian classic — coarse spice powder for idli, dosa, rice. Mix with sesame oil or ghee.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "1.0g", fat: "0.1g" }, microHighlights: ["Iron", "Calcium", "Vitamin C", "Fiber", "Protein", "Healthy Fats"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Chana dal", amount: 0.25, unit: "cup" },
+      { name: "Urad dal", amount: 0.25, unit: "cup" },
+      { name: "Sesame seeds", amount: 0.25, unit: "tbsp" },
+      { name: "Methi dana", amount: 0.5, unit: "tsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tsp" },
+      { name: "Mustard seeds", amount: 1, unit: "tsp" },
+      { name: "Curry leaves", amount: 20, unit: "pcs" },
+      { name: "Dry Kashmiri red chillies", amount: 5, unit: "pcs" },
+      { name: "Salt", amount: 1, unit: "tsp" },
+      { name: "Hing", amount: 0.25, unit: "tsp" },
+      { name: "Dry seedless tamarind", amount: 1.5, unit: "tbsp" },
+      { name: "Garlic cloves (optional)", amount: 7, unit: "pcs" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "maggi-masala",
+    category: "masalas",
+    title: "Homemade Maggi / Noodle Masala",
+    description: "Homemade noodle seasoning — tangy, savory flavor for Maggi, pasta, fries, or any snack.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: ["Vitamin C"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Black pepper", amount: 1, unit: "tsp" },
+      { name: "Kashmiri red chilli powder", amount: 2, unit: "tsp" },
+      { name: "Red chilli powder", amount: 0.5, unit: "tsp" },
+      { name: "Turmeric powder", amount: 0.5, unit: "tsp" },
+      { name: "Dry ginger powder", amount: 0.5, unit: "tsp" },
+      { name: "Garlic powder", amount: 1, unit: "tsp" },
+      { name: "Onion powder", amount: 1, unit: "tsp" },
+      { name: "Amchur powder", amount: 2, unit: "tsp" },
+      { name: "Tomato powder (optional)", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1.5, unit: "tsp" },
+      { name: "Black salt", amount: 0.5, unit: "tsp" },
+      { name: "Sugar (optional)", amount: 1, unit: "tsp" },
+      { name: "Kasuri methi (crushed)", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-kadhi",
+    category: "masalas",
+    title: "Kadhi Masala",
+    description: "For kadhi pakora — fenugreek-forward, tangy.",
+    baseServings: 1, calories: "~8 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "1.3g", fat: "0.2g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Fenugreek seeds", amount: 1, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 1, unit: "tbsp" },
+      { name: "Mustard seeds", amount: 1, unit: "tsp" },
+      { name: "Dried red chilli", amount: 3, unit: "pcs" },
+      { name: "Asafoetida (hing)", amount: 0.25, unit: "tsp" },
+      { name: "Turmeric (raw)", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-kitchen-king",
+    category: "masalas",
+    title: "Kitchen King Masala",
+    description: "All-purpose — works in any sabzi, dal, or rice dish.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "0.9g", fat: "0.1g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Dried red chilli", amount: 2, unit: "pcs" },
+      { name: "Fennel seeds", amount: 1, unit: "tbsp" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tsp" },
+      { name: "Turmeric (raw)", amount: 0.5, unit: "tsp" },
+      { name: "Kasuri methi", amount: 1, unit: "tbsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-kolhapuri",
+    category: "masalas",
+    title: "Kolhapuri Masala",
+    description: "Maharashtrian firepower — byadgi chillies + dried garlic + ginger. Use 1-1.5 tsp per dish.",
+    baseServings: 1, calories: "~8 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "1.1g", fat: "0.3g" }, microHighlights: ["Iron", "Calcium", "Healthy Fats"],
+    variations: [
+      { label: "Standard", calories: "~8 cal", macros: { protein: "0.3g", carbs: "1.1g", fat: "0.3g" }, microHighlights: ["Iron", "Calcium", "Healthy Fats"] },
+      { label: "Milder (less chilli)", calories: "~8 cal", macros: { protein: "0.3g", carbs: "1.0g", fat: "0.3g" }, microHighlights: ["Iron", "Calcium", "Healthy Fats"] }
+    ],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Byadgi red chillies", amount: 15, unit: "pcs" },
+      { name: "Kashmiri red chillies", amount: 5, unit: "pcs" },
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1.5, unit: "tbsp" },
+      { name: "Black pepper", amount: 1, unit: "tbsp" },
+      { name: "Poppy seeds (khus khus)", amount: 1, unit: "tbsp" },
+      { name: "Sesame seeds (til)", amount: 1, unit: "tbsp" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 8, unit: "pcs" },
+      { name: "Black cardamom", amount: 2, unit: "pcs" },
+      { name: "Green cardamom", amount: 4, unit: "pcs" },
+      { name: "Star anise", amount: 1, unit: "pcs" },
+      { name: "Stone flower / dagad phool", amount: 0.5, unit: "tsp" },
+      { name: "Garlic (dried)", amount: 2, unit: "tsp" },
+      { name: "Ginger (dried)", amount: 2, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [
+      { label: "🌶️ Prefer less heat?", text: "This is one of the spicier blends. For a milder version, cut the Byadgi chillies to about 9 (keep the 5 Kashmiri as-is — they're mostly for color, not heat). Everything else stays the same." }
+    ],
+  },
+{
+    id: "masala-korma",
+    category: "masalas",
+    title: "Korma Masala",
+    description: "For veg/chicken korma — melon seeds + poppy seeds make it silky.",
+    baseServings: 1, calories: "~10 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "0.8g", fat: "0.6g" }, microHighlights: ["Iron", "Protein", "Healthy Fats"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "White poppy seeds", amount: 1, unit: "tbsp" },
+      { name: "Melon seeds", amount: 1, unit: "tbsp" },
+      { name: "Cashew nuts", amount: 2, unit: "tbsp" },
+      { name: "Green cardamom", amount: 4, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Black peppercorns", amount: 1, unit: "tsp" },
+      { name: "Mace (Javitri)", amount: 1, unit: "pcs" },
+      { name: "Bay leaf", amount: 1, unit: "pcs" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-malvani",
+    category: "masalas",
+    title: "Malvani Masala (Konkan)",
+    description: "Bold coastal blend for fish curries, chicken, veg gravies. Dagad phool is the signature.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: [],
+    variations: [
+      { label: "Standard", calories: "~6 cal", macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: [] },
+      { label: "Milder (less chilli)", calories: "~6 cal", macros: { protein: "0.2g", carbs: "0.9g", fat: "0.1g" }, microHighlights: [] }
+    ],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 3, unit: "tbsp" },
+      { name: "Byadgi dried chillies", amount: 8, unit: "pcs" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Dagad phool (stone flower)", amount: 1, unit: "tbsp" },
+      { name: "Star anise", amount: 2, unit: "pcs" },
+      { name: "Mace", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 6, unit: "pcs" },
+      { name: "Fennel seeds", amount: 1, unit: "tbsp" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Black peppercorns", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [
+      { label: "🌶️ Prefer less heat?", text: "This is one of the spicier blends. For a milder version, cut the Byadgi chillies to about 5. Everything else stays the same." }
+    ],
+  },
+{
+    id: "masala-misal",
+    category: "masalas",
+    title: "Misal Masala",
+    description: "For misal pav — Maharashtrian street food spice blend.",
+    baseServings: 1, calories: "~7 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "1.1g", fat: "0.1g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Dried red chilli", amount: 3, unit: "pcs" },
+      { name: "Goda masala base", amount: 1, unit: "tbsp" },
+      { name: "Turmeric (raw)", amount: 0.5, unit: "tsp" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tsp" },
+      { name: "Cloves", amount: 3, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Fennel seeds", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-mutton",
+    category: "masalas",
+    title: "Mutton Masala",
+    description: "The most complex blend — stone flower, moggu, dried curry leaves. For mutton curry, keema, goat stews.",
+    baseServings: 1, calories: "~4 cal/tsp", totalTime: 15,
+    macros: { protein: "0.1g", carbs: "0.6g", fat: "0.1g" }, microHighlights: ["Iron"],
+    variations: [
+      { label: "Standard", calories: "~4 cal", macros: { protein: "0.1g", carbs: "0.6g", fat: "0.1g" }, microHighlights: ["Iron"] },
+      { label: "Milder (less chilli)", calories: "~4 cal", macros: { protein: "0.1g", carbs: "0.6g", fat: "0.1g" }, microHighlights: ["Iron"] }
+    ],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 0.5, unit: "cup" },
+      { name: "Cumin seeds", amount: 2, unit: "tbsp" },
+      { name: "Fennel seeds", amount: 2, unit: "tbsp" },
+      { name: "Dried red chillies", amount: 20, unit: "pcs" },
+      { name: "Black pepper", amount: 1, unit: "tbsp" },
+      { name: "Poppy seeds", amount: 2, unit: "tsp" },
+      { name: "Cinnamon", amount: 4, unit: "pcs" },
+      { name: "Cloves", amount: 15, unit: "pcs" },
+      { name: "Green cardamom", amount: 10, unit: "pcs" },
+      { name: "Star anise", amount: 2, unit: "pcs" },
+      { name: "Marathi Moggu", amount: 2, unit: "pcs" },
+      { name: "Black stone flower (Kalpasi)", amount: 2, unit: "tbsp" },
+      { name: "Bay leaves", amount: 4, unit: "pcs" },
+      { name: "Mace", amount: 2, unit: "pcs" },
+      { name: "Nutmeg (half)", amount: 0.5, unit: "pcs" },
+      { name: "Curry leaves (shade-dried)", amount: 1, unit: "cup" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [
+      { label: "🌶️ Prefer less heat?", text: "This is the spiciest blend in the whole cookbook — it's also a large batch. For a milder version, cut the dried red chillies to about 12 (swap some for Kashmiri to keep the color). Everything else stays the same." }
+    ],
+  },
+{
+    id: "masala-panch-phoran",
+    category: "masalas",
+    title: "Panch Phoran (Bengali 5-Spice)",
+    description: "West Bengals signature — 5 whole seeds in equal parts. Never ground. Temper in hot oil.",
+    baseServings: 1, calories: "~8 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "1.2g", fat: "0.2g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Fenugreek seeds (methi)", amount: 1, unit: "tsp" },
+      { name: "Nigella seeds (kalonji)", amount: 1, unit: "tsp" },
+      { name: "Cumin seeds (jeera)", amount: 1, unit: "tsp" },
+      { name: "Black mustard seeds (rai)", amount: 1, unit: "tsp" },
+      { name: "Fennel seeds (saunf)", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Mix and store", content: "Mix all 5 seeds in equal parts. Do NOT grind — this blend is always used whole. Temper in hot oil/ghee until seeds pop and crackle, then add your vegetables or dal.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-pav-bhaji",
+    category: "masalas",
+    title: "Pav Bhaji Masala",
+    description: "For pav bhaji — two versions: standard small batch and large batch.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "0.9g", fat: "0.1g" }, microHighlights: ["Vitamin C", "Vitamin A"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Fennel seeds", amount: 1, unit: "tbsp" },
+      { name: "Dried red chilli", amount: 3, unit: "pcs" },
+      { name: "Kashmiri red chilli powder", amount: 1, unit: "tbsp" },
+      { name: "Turmeric (raw)", amount: 0.5, unit: "tsp" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tsp" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Black cardamom", amount: 1, unit: "pcs" },
+      { name: "Dry mango powder", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "podi-peanut",
+    category: "masalas",
+    title: "Peanut Podi",
+    description: "Nuttier and richer than gunpowder. Great on rice with ghee.",
+    baseServings: 1, calories: "~17 cal/tsp", totalTime: 15,
+    macros: { protein: "0.5g", carbs: "1.0g", fat: "1.2g" }, microHighlights: ["Iron", "Vitamin C", "Protein", "Healthy Fats"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Roasted peanuts", amount: 1, unit: "cup" },
+      { name: "Garlic cloves", amount: 5, unit: "pcs" },
+      { name: "Dried red chilies", amount: 4, unit: "pcs" },
+      { name: "Cumin seeds", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Sugar", amount: 0.5, unit: "tsp" },
+      { name: "Oil", amount: 1, unit: "tsp" },
+      { name: "Tamarind (small bit)", amount: 1, unit: "pcs" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-pulao",
+    category: "masalas",
+    title: "Pulao Masala",
+    description: "For veg/chicken pulao — lighter, more fragrant than biryani masala.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Cumin seeds", amount: 2, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Black peppercorns", amount: 1, unit: "tsp" },
+      { name: "Green cardamom", amount: 6, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Bay leaf", amount: 2, unit: "pcs" },
+      { name: "Mace (small piece)", amount: 1, unit: "pcs" },
+      { name: "Nutmeg (small piece)", amount: 1, unit: "pcs" },
+      { name: "Star anise", amount: 1, unit: "pcs" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-rajma",
+    category: "masalas",
+    title: "Rajma Masala",
+    description: "For rajma chawal — warming, slightly tangy from amchur.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: ["Vitamin C", "Vitamin A"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Dried red chilli", amount: 3, unit: "pcs" },
+      { name: "Black cardamom", amount: 1, unit: "pcs" },
+      { name: "Green cardamom", amount: 2, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tsp" },
+      { name: "Bay leaf", amount: 1, unit: "pcs" },
+      { name: "Dry mango powder", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-rasam",
+    category: "masalas",
+    title: "Rasam Masala",
+    description: "For rasam — peppery, garlicky, tangy. Simple and powerful.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.1g", fat: "0.1g" }, microHighlights: [],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Black peppercorns", amount: 1, unit: "tsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tsp" },
+      { name: "Dried garlic cloves", amount: 5, unit: "pcs" },
+      { name: "Dry red chilli", amount: 2, unit: "pcs" },
+      { name: "Curry leaves (dried)", amount: 1, unit: "tsp" },
+      { name: "Hing", amount: 0.25, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-sabzi",
+    category: "masalas",
+    title: "Sabzi Masala",
+    description: "For everyday vegetable dishes — lighter than Kitchen King.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: ["Vitamin C", "Vitamin A"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Fennel seeds", amount: 1, unit: "tbsp" },
+      { name: "Dried red chilli", amount: 2, unit: "pcs" },
+      { name: "Turmeric (raw)", amount: 0.5, unit: "tsp" },
+      { name: "Black peppercorns", amount: 0.5, unit: "tsp" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 3, unit: "pcs" },
+      { name: "Black cardamom", amount: 1, unit: "pcs" },
+      { name: "Dry mango powder", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-sambhar",
+    category: "masalas",
+    title: "Sambhar Masala",
+    description: "For sambhar, rasam base — South Indian essential with three dals.",
+    baseServings: 1, calories: "~7 cal/tsp", totalTime: 15,
+    macros: { protein: "0.4g", carbs: "1.1g", fat: "0.1g" }, microHighlights: ["Iron", "Fiber", "Protein"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Toor dal", amount: 1, unit: "tbsp" },
+      { name: "Chana dal", amount: 1, unit: "tbsp" },
+      { name: "Urad dal", amount: 1, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tsp" },
+      { name: "Fenugreek seeds", amount: 0.5, unit: "tsp" },
+      { name: "Dry red chilli", amount: 3, unit: "pcs" },
+      { name: "Curry leaves (dried)", amount: 1, unit: "tsp" },
+      { name: "Hing", amount: 0.25, unit: "tsp" },
+      { name: "Turmeric (raw)", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "sandwich-masala",
+    category: "masalas",
+    title: "Sandwich Masala + Mumbai Chutney",
+    description: "Street-style sandwich seasoning + green chutney. For bombay sandwiches, wraps, chaat.",
+    baseServings: 1, calories: "~1 cal/tsp", totalTime: 15,
+    macros: { protein: "0.0g", carbs: "0.2g", fat: "0.0g" }, microHighlights: ["Vitamin C"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 1, unit: "tbsp" },
+      { name: "Black pepper", amount: 1, unit: "tsp" },
+      { name: "Dry red chilli", amount: 2, unit: "pcs" },
+      { name: "Amchur powder", amount: 1, unit: "tsp" },
+      { name: "Black salt", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Sugar", amount: 0.5, unit: "tsp" },
+      { name: "Chaat masala", amount: 1, unit: "tsp" },
+      { name: "— Green Chutney —", amount: 0, unit: "pcs" },
+      { name: "Fresh coriander", amount: 1, unit: "cup" },
+      { name: "Mint leaves", amount: 0.5, unit: "cup" },
+      { name: "Green chillies", amount: 2, unit: "pcs" },
+      { name: "Garlic cloves", amount: 2, unit: "pcs" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-shahi-paneer",
+    category: "masalas",
+    title: "Shahi Paneer Masala",
+    description: "For shahi paneer — cashew richness + rose petal elegance.",
+    baseServings: 1, calories: "~8 cal/tsp", totalTime: 15,
+    macros: { protein: "0.3g", carbs: "0.9g", fat: "0.4g" }, microHighlights: ["Iron", "Protein", "Healthy Fats"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 1, unit: "tbsp" },
+      { name: "Cashew nuts", amount: 2, unit: "tbsp" },
+      { name: "Dried red chilli", amount: 2, unit: "pcs" },
+      { name: "Green cardamom", amount: 4, unit: "pcs" },
+      { name: "Cinnamon", amount: 1, unit: "pcs" },
+      { name: "Cloves", amount: 4, unit: "pcs" },
+      { name: "Black peppercorns", amount: 1, unit: "tsp" },
+      { name: "Mace (Javitri)", amount: 1, unit: "pcs" },
+      { name: "Dry rose petals", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "sk-magic-masala",
+    category: "masalas",
+    title: "SK Magic Masala (21 Spices)",
+    description: "Sanjyot Keers all-purpose blend — 21 spices, one jar. Works in everything.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "0.9g", fat: "0.1g" }, microHighlights: ["Vitamin C"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Cumin seeds", amount: 2, unit: "tbsp" },
+      { name: "Coriander seeds", amount: 2, unit: "tbsp" },
+      { name: "Black peppercorns", amount: 1, unit: "tbsp" },
+      { name: "Fennel seeds", amount: 1, unit: "tbsp" },
+      { name: "Mustard seeds", amount: 1, unit: "tsp" },
+      { name: "Fenugreek seeds", amount: 0.5, unit: "tsp" },
+      { name: "Dried red chillies", amount: 5, unit: "pcs" },
+      { name: "Cinnamon", amount: 2, unit: "pcs" },
+      { name: "Cloves", amount: 6, unit: "pcs" },
+      { name: "Green cardamom", amount: 4, unit: "pcs" },
+      { name: "Black cardamom", amount: 2, unit: "pcs" },
+      { name: "Bay leaves", amount: 3, unit: "pcs" },
+      { name: "Star anise", amount: 2, unit: "pcs" },
+      { name: "Mace", amount: 1, unit: "pcs" },
+      { name: "Nutmeg (piece)", amount: 1, unit: "pcs" },
+      { name: "Turmeric (raw)", amount: 1, unit: "tsp" },
+      { name: "Kashmiri chilli powder", amount: 1, unit: "tbsp" },
+      { name: "Dry ginger powder", amount: 1, unit: "tsp" },
+      { name: "Asafoetida (hing)", amount: 0.5, unit: "tsp" },
+      { name: "Kasuri methi", amount: 2, unit: "tbsp" },
+      { name: "Amchur powder", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "masala-tandoori",
+    category: "masalas",
+    title: "Tandoori Masala",
+    description: "For tandoori chicken, paneer tikka, grilled veggies, yogurt-based marinades.",
+    baseServings: 1, calories: "~6 cal/tsp", totalTime: 15,
+    macros: { protein: "0.2g", carbs: "1.0g", fat: "0.1g" }, microHighlights: ["Vitamin C", "Vitamin A"],
+    tags: ["masala", "spice-blend", "pantry", "Indian"],
+    ingredients: [
+      { name: "Coriander seeds", amount: 3, unit: "tbsp" },
+      { name: "Cumin seeds", amount: 2, unit: "tbsp" },
+      { name: "Black peppercorns", amount: 1, unit: "tsp" },
+      { name: "Green cardamom", amount: 6, unit: "pcs" },
+      { name: "Cinnamon", amount: 2, unit: "pcs" },
+      { name: "Dried red chillies", amount: 7, unit: "pcs" },
+      { name: "Fenugreek seeds", amount: 0.25, unit: "tsp" },
+      { name: "Kasuri methi", amount: 2, unit: "tbsp" },
+      { name: "Nutmeg (grated)", amount: 0.25, unit: "tsp" },
+      { name: "Ginger powder", amount: 1, unit: "tsp" },
+      { name: "Onion powder", amount: 1, unit: "tbsp" },
+      { name: "Garlic powder", amount: 1, unit: "tbsp" },
+      { name: "Turmeric", amount: 0.5, unit: "tsp" },
+      { name: "Kashmiri red chilli powder", amount: 2, unit: "tsp" },
+      { name: "Dry mango powder", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Make it", content: "Dry roast whole spices on LOW flame till fragrant. Cool completely. Grind to fine powder. Store in airtight glass jar — keeps 1-3 months.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "sauce-aglio-olio",
+    category: "sauces",
+    title: "Aglio e Olio Sauce",
+    description: "Garlic and oil — the simplest Italian sauce, just a handful of ingredients done right.",
+    baseServings: 4, calories: "~127 cal/serving", totalTime: 10,
+    macros: { protein: "0.3g", carbs: "1.3g", fat: "13.4g" }, microHighlights: ["Healthy Fats"],
+    tags: ["pasta-sauce", "italian", "garlic", "quick", "vegetarian", "no-cream"],
+    ingredients: [
+      { name: "Olive oil", amount: 0.25, unit: "cup" },
+      { name: "Garlic cloves (sliced)", amount: 6, unit: "pcs" },
+      { name: "Chilli flakes", amount: 1, unit: "tsp" },
+      { name: "Parsley (chopped)", amount: 2, unit: "tbsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Infuse the oil", content: "Heat olive oil on low. Add sliced garlic and chilli flakes. Cook slowly until garlic turns light golden — don't let it brown or burn, it turns bitter fast.", timerSeconds: 180 },
+      { title: "Toss with pasta", content: "Toss hot pasta directly in the garlic oil along with a splash of reserved pasta water. Season with salt.", timerSeconds: null },
+      { title: "Finish", content: "Stir in fresh parsley just before serving.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Watch the garlic", text: "This is the whole dish, so garlic timing matters — low heat, golden not brown. Burnt garlic will ruin the entire sauce." }
+    ],
+  },
+{
+    id: "sauce-alfredo",
+    category: "sauces",
+    title: "Alfredo Sauce",
+    description: "Classic Italian white sauce — butter, cream, parmesan, garlic. Rich and simple.",
+    baseServings: 4, calories: "~360 cal/serving", totalTime: 10,
+    macros: { protein: "10.1g", carbs: "3.4g", fat: "34.0g" }, microHighlights: ["Calcium", "Protein"],
+    tags: ["pasta-sauce", "italian", "creamy", "quick"],
+    ingredients: [
+      { name: "Butter", amount: 2, unit: "tbsp" },
+      { name: "Fresh cream", amount: 1, unit: "cup" },
+      { name: "Parmesan cheese", amount: 1, unit: "cup" },
+      { name: "Garlic cloves (minced)", amount: 2, unit: "pcs" },
+      { name: "Salt & pepper", amount: 1, unit: "pinch" }
+    ],
+    steps: [
+      { title: "Melt and sauté", content: "Melt butter in a pan. Add minced garlic, sauté until fragrant, about 1 min.", timerSeconds: 60 },
+      { title: "Add cream", content: "Pour in fresh cream, bring to a gentle simmer.", timerSeconds: null },
+      { title: "Finish with cheese", content: "Stir in parmesan cheese until melted and smooth. Season with salt and pepper. Toss with hot pasta immediately.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Don't boil", text: "Keep heat low once cream is added — boiling can cause it to separate." }
+    ],
+  },
+{
+    id: "sauce-arrabbiata",
+    category: "sauces",
+    title: "Arrabbiata Sauce",
+    description: "Spicy Italian tomato sauce — garlic and chilli flakes give it a kick. Simple pantry-staple sauce.",
+    baseServings: 4, calories: "~80 cal/serving", totalTime: 20,
+    macros: { protein: "1.9g", carbs: "9.3g", fat: "4.0g" }, microHighlights: ["Vitamin C", "Healthy Fats"],
+    tags: ["pasta-sauce", "italian", "spicy", "tomato", "vegetarian"],
+    ingredients: [
+      { name: "Tomato puree", amount: 2, unit: "cup" },
+      { name: "Olive oil", amount: 1, unit: "tbsp" },
+      { name: "Garlic cloves (minced)", amount: 4, unit: "pcs" },
+      { name: "Chilli flakes", amount: 1, unit: "tsp" },
+      { name: "Salt & basil", amount: 1, unit: "pinch" }
+    ],
+    steps: [
+      { title: "Sauté garlic", content: "Heat olive oil, add minced garlic and chilli flakes. Sauté until fragrant, about 1 min — don't let garlic brown.", timerSeconds: 60 },
+      { title: "Simmer", content: "Add tomato puree and salt. Simmer on low for 15 min, stirring occasionally.", timerSeconds: 900 },
+      { title: "Finish", content: "Stir in fresh basil just before serving.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Spice control", text: "1 tsp chilli flakes gives a real kick — start with half if you want it milder, taste and adjust." }
+    ],
+  },
+{
+    id: "sauce-coconut-chutney",
+    category: "sauces",
+    title: "Coconut Chutney",
+    description: "Creamy, mild South Indian classic — ready in 10 minutes. Perfect with idli, dosa, vada, uttapam. Day 1 of a chutney series — more variations to come.",
+    baseServings: 4, calories: "~114 cal/serving", totalTime: 10,
+    macros: { protein: "4.5g", carbs: "18.5g", fat: "2.4g" }, microHighlights: ["Iron", "Vitamin C", "Fiber", "Protein"],
+    tags: ["chutney", "south-indian", "coconut", "quick", "vegetarian"],
+    ingredients: [
+      { name: "Fresh grated coconut", amount: 1, unit: "cup" },
+      { name: "Green chillies", amount: 2, unit: "pcs" },
+      { name: "Ginger (1 inch)", amount: 1, unit: "pcs" },
+      { name: "Garlic cloves", amount: 3.5, unit: "pcs" },
+      { name: "Roasted chana dal (Bengal gram)", amount: 0.25, unit: "cup" },
+      { name: "Cumin seeds", amount: 0.5, unit: "tsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Water (as needed)", amount: 3, unit: "tbsp" },
+      { name: "— Tempering —", amount: 0, unit: "pcs" },
+      { name: "Oil", amount: 1, unit: "tsp" },
+      { name: "Mustard seeds", amount: 0.5, unit: "tsp" },
+      { name: "Chana dal", amount: 0.5, unit: "tsp" },
+      { name: "Dry red chilli", amount: 1, unit: "pcs" },
+      { name: "Curry leaves", amount: 1, unit: "pinch" }
+    ],
+    steps: [
+      { title: "Blend", content: "Add grated coconut, roasted chana dal, green chillies, ginger, garlic, cumin seeds, and salt to a mixer jar. Add 2-3 tbsp water and grind to a smooth paste.", timerSeconds: null },
+      { title: "Adjust consistency", content: "Transfer to a bowl. Adjust consistency with a little more water if needed.", timerSeconds: null },
+      { title: "Temper", content: "Heat oil in a small pan. Add mustard seeds, chana dal, dry red chilli, and curry leaves. Cook until mustard seeds pop, about 30 seconds.", timerSeconds: 30 },
+      { title: "Finish", content: "Pour the tempering over the chutney and mix well. Serve fresh.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Fresh coconut matters", text: "Use fresh grated coconut for best taste — frozen works but flavor is noticeably milder." },
+      { label: "Storage", text: "Can be stored in the fridge for 1-2 days. Tastes amazing with a drizzle of sesame oil before serving." },
+      { label: "Don't over-water", text: "Add water gradually while grinding — too much makes the chutney runny and dilutes flavor." }
+    ],
+  },
+{
+    id: "sauce-garlic-aioli",
+    category: "sauces",
+    title: "Garlic Mayonnaise (Aioli)",
+    description: "Universal dip — for fries, burgers, wraps, sandwiches. Simple garlic + lemon + olive oil.",
+    baseServings: 4, calories: "~38 cal/serving", totalTime: 5,
+    macros: { protein: "1.3g", carbs: "0.8g", fat: "3.3g" }, microHighlights: ["Vitamin C", "Protein", "Healthy Fats"],
+    tags: ["sauce", "mayo", "dip", "restaurant-style"],
+    ingredients: [
+      { name: "Mayonnaise (eggless/regular)", amount: 0.75, unit: "cup" },
+      { name: "Fresh garlic (finely minced)", amount: 1, unit: "tbsp" },
+      { name: "Lemon juice", amount: 2, unit: "tsp" },
+      { name: "Black pepper powder", amount: 0.5, unit: "tsp" },
+      { name: "Olive oil", amount: 2, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Blend and chill", content: "Blend all ingredients until smooth (or mix well by hand for chunky texture). Taste and adjust salt/lemon. Refrigerate 30 min for flavors to meld. Keeps 5-7 days.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "homemade-cheese-spread",
+    category: "sauces",
+    title: "Homemade High-Protein Cheese Spread",
+    description: "Make your own spicy cheese spread from scratch using milk — high protein, no preservatives. Sets in the fridge.",
+    baseServings: 8, calories: "~60 cal/serving", totalTime: 310,
+    tags: ["healthy", "high-protein", "homemade"],
+    macros: { protein: 4, carbs: 3, fat: 3 },
+    micronutrients: ["Protein", "Calcium"],
+    ingredients: [
+      { name: "Full-fat milk", amount: 4, unit: "cup" },
+      { name: "White vinegar", amount: 2, unit: "tbsp" },
+      { name: "Water", amount: 2, unit: "tbsp" },
+      { name: "Whole red chilli", amount: 1, unit: "pcs" },
+      { name: "Food-grade citric acid (tatri)", amount: 0.5, unit: "tsp" },
+      { name: "Baking soda", amount: 0.25, unit: "tsp" },
+      { name: "Water (for blending)", amount: 1, unit: "tbsp" },
+      { name: "Dried oregano", amount: 0.5, unit: "tsp" },
+      { name: "Chilli flakes", amount: 0.5, unit: "tsp" },
+      { name: "Jalapenos, finely chopped", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Curdle milk", content: "Heat milk until just warm. Add 1 whole red chilli. Mix vinegar + water and add to milk to curdle it. Strain the chhena through a cloth and wash well under running water.", timerSeconds: null },
+      { title: "Blend smooth", content: "Add chhena and red chilli to a blender. Separately mix citric acid + baking soda + 1 tbsp water, then add to blender. Blend until completely smooth.", timerSeconds: null },
+      { title: "Season", content: "Transfer to a bowl. Add oregano, chilli flakes, salt, and finely chopped jalapenos. Mix well.", timerSeconds: null },
+      { title: "Set", content: "Press into a bowl or container, cover with cling wrap, and refrigerate for 4-5 hours until firm.", timerSeconds: 18000 },
+      { title: "Serve", content: "Spread on bread, crackers, or use as a dip. Keeps refrigerated for 4-5 days.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Key chemistry", text: "Citric acid + baking soda creates CO2 which gives the spread a smooth, spreadable texture. Don't skip this step." },
+      { label: "Red chilli", text: "Remove the stem before blending. Adjust to taste." },
+      { label: "Protein", text: "Made from 1L of milk, so each serving has ~4g protein from the chhena alone." }
+    ],
+  },
+{
+    id: "sauce-mint-mayo",
+    category: "sauces",
+    title: "Mint Mayo (Pudina Mayonnaise)",
+    description: "Indian restaurant signature dip — for tikka, kebabs, sandwiches. Fresh mint + coriander + green chilli.",
+    baseServings: 4, calories: "~274 cal/serving", totalTime: 5,
+    macros: { protein: "19.1g", carbs: "2.0g", fat: "21.1g" }, microHighlights: ["Vitamin C"],
+    tags: ["sauce", "mayo", "dip", "restaurant-style"],
+    ingredients: [
+      { name: "Mayonnaise", amount: 0.75, unit: "cup" },
+      { name: "Fresh mint leaves (pudina)", amount: 0.5, unit: "cup" },
+      { name: "Fresh coriander (dhaniya)", amount: 0.33, unit: "cup" },
+      { name: "Green chilli (crushed)", amount: 2, unit: "tsp" },
+      { name: "Lemon juice", amount: 2, unit: "tsp" },
+      { name: "Chaat masala", amount: 1, unit: "tsp" },
+      { name: "Salt", amount: 1, unit: "tsp" }
+    ],
+    steps: [{ title: "Blend and chill", content: "Blend all ingredients until smooth (or mix well by hand for chunky texture). Taste and adjust salt/lemon. Refrigerate 30 min for flavors to meld. Keeps 5-7 days.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "sauce-pesto",
+    category: "sauces",
+    title: "Pesto Sauce",
+    description: "Fresh basil, pine nuts, parmesan, garlic, olive oil — blended, not cooked. Bright and herby.",
+    baseServings: 4, calories: "~245 cal/serving", totalTime: 10,
+    macros: { protein: "3.7g", carbs: "3.7g", fat: "23.9g" }, microHighlights: ["Calcium", "Protein", "Healthy Fats"],
+    tags: ["pasta-sauce", "italian", "basil", "no-cook", "vegetarian"],
+    ingredients: [
+      { name: "Basil leaves", amount: 2, unit: "cup" },
+      { name: "Pine nuts", amount: 0.25, unit: "cup" },
+      { name: "Parmesan cheese", amount: 0.25, unit: "cup" },
+      { name: "Garlic cloves", amount: 2, unit: "pcs" },
+      { name: "Olive oil", amount: 0.33, unit: "cup" }
+    ],
+    steps: [
+      { title: "Blend", content: "Combine basil, pine nuts, parmesan, and garlic in a food processor. Pulse until finely chopped.", timerSeconds: null },
+      { title: "Emulsify", content: "With the processor running, slowly stream in olive oil until smooth and creamy.", timerSeconds: null },
+      { title: "Season and toss", content: "Season with salt to taste. Toss with hot pasta — the residual heat brings out the aroma.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "No pine nuts?", text: "Walnuts or cashews work as a substitute, slightly different flavor but still delicious." },
+      { label: "Storage", text: "Top with a thin layer of olive oil before refrigerating to prevent browning. Keeps 4-5 days." }
+    ],
+  },
+{
+    id: "sauce-pink",
+    category: "sauces",
+    title: "Pink Sauce",
+    description: "Tomato + cream combined — the best of both marinara and alfredo. Kid-friendly favorite.",
+    baseServings: 4, calories: "~150 cal/serving", totalTime: 15,
+    macros: { protein: "2.2g", carbs: "5.8g", fat: "13.1g" }, microHighlights: ["Calcium", "Vitamin C"],
+    tags: ["pasta-sauce", "italian", "creamy", "tomato", "kid-friendly"],
+    ingredients: [
+      { name: "Tomato puree", amount: 1, unit: "cup" },
+      { name: "Fresh cream", amount: 0.5, unit: "cup" },
+      { name: "Butter", amount: 1, unit: "tbsp" },
+      { name: "Garlic cloves (minced)", amount: 2, unit: "pcs" },
+      { name: "Salt & pepper", amount: 1, unit: "pinch" }
+    ],
+    steps: [
+      { title: "Sauté garlic", content: "Melt butter, sauté minced garlic until fragrant.", timerSeconds: 60 },
+      { title: "Simmer tomato", content: "Add tomato puree, simmer 8-10 min until slightly thickened.", timerSeconds: 600 },
+      { title: "Add cream", content: "Lower heat, stir in fresh cream. Simmer gently 2-3 min, season with salt and pepper.", timerSeconds: 180 }
+    ],
+    notes: [
+      { label: "Kid-approved", text: "The mild sweetness from the cream makes this an easy sell for picky eaters who find plain marinara too tangy." }
+    ],
+  },
+{
+    id: "salad-dressings",
+    category: "sauces",
+    title: "Salad Dressings (6 Flavors)",
+    description: "Quick homemade dressings — no preservatives, better than store-bought. Shake in a jar.",
+    baseServings: 4, calories: "~91 cal/serving", totalTime: 5,
+    macros: { protein: "0.0g", carbs: "0.2g", fat: "10.0g" }, microHighlights: ["Healthy Fats"],
+    variations: [
+      { label: "Classic Vinaigrette", calories: "~97 cal", macros: { protein: "0.1g", carbs: "1.6g", fat: "10.0g" }, microHighlights: ["Healthy Fats"] },
+      { label: "Lemon Tahini", calories: "~78 cal", macros: { protein: "1.8g", carbs: "7.8g", fat: "4.4g" }, microHighlights: ["Vitamin C", "Healthy Fats"] },
+      { label: "Asian Sesame", calories: "~68 cal", macros: { protein: "0.1g", carbs: "1.9g", fat: "6.7g" }, microHighlights: [] },
+      { label: "Caesar-ish", calories: "~105 cal", macros: { protein: "1.1g", carbs: "0.8g", fat: "10.9g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Healthy Fats"] },
+      { label: "Honey Mustard", calories: "~80 cal", macros: { protein: "0.2g", carbs: "4.7g", fat: "6.8g" }, microHighlights: ["Healthy Fats"] },
+      { label: "Indian Chaat", calories: "~63 cal", macros: { protein: "0.1g", carbs: "0.5g", fat: "6.7g" }, microHighlights: ["Vitamin C", "Healthy Fats"] }
+    ],
+    tags: ["dressing", "salad", "healthy", "homemade"],
+    ingredients: [
+      { name: "Olive oil (base for all)", amount: 3, unit: "tbsp" },
+      { name: "Acid (lemon/vinegar)", amount: 1, unit: "tbsp" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Pepper", amount: 0.25, unit: "tsp" },
+    ],
+    steps: [{ title: "Shake it", content: "Combine all ingredients in a jar. Shake vigorously for 30 seconds. Taste and adjust. Keeps 5-7 days refrigerated.", timerSeconds: null }],
+    notes: [
+      { label: "1. Classic Vinaigrette", text: "3 tbsp olive oil + 1 tbsp red wine vinegar + 1 tsp Dijon mustard + 1 tsp honey. The gold standard." },
+      { label: "2. Lemon Tahini", text: "2 tbsp tahini + 2 tbsp lemon juice + 1 tbsp olive oil + 1 garlic clove + water to thin. Creamy, nutty." },
+      { label: "3. Asian Sesame", text: "2 tbsp sesame oil + 1 tbsp rice vinegar + 1 tbsp soy sauce + 1 tsp honey + 1 tsp ginger (grated). Umami-packed." },
+      { label: "4. Caesar-ish", text: "3 tbsp olive oil + 1 tbsp lemon + 1 tsp Dijon + 1 garlic clove + 2 tbsp parmesan + 1 tsp Worcestershire. No raw egg needed." },
+      { label: "5. Honey Mustard", text: "2 tbsp olive oil + 1 tbsp Dijon + 1 tbsp honey + 1 tbsp apple cider vinegar. Sweet-tangy." },
+      { label: "6. Indian Chaat", text: "2 tbsp olive oil + 1 tbsp lemon + 1 tsp chaat masala + 0.5 tsp cumin + pinch black salt + 1 tbsp chopped coriander. Tangy-spicy." },
+    ],
+  },
+{
+    id: "sauce-tandoori-mayo",
+    category: "sauces",
+    title: "Tandoori Mayonnaise",
+    description: "Smoky Indian twist — for burgers, pizzas, rolls. Tandoori masala + Kashmiri chilli for color.",
+    baseServings: 4, calories: "~278 cal/serving", totalTime: 5,
+    macros: { protein: "19.2g", carbs: "2.6g", fat: "21.2g" }, microHighlights: ["Vitamin C"],
+    tags: ["sauce", "mayo", "dip", "restaurant-style"],
+    ingredients: [
+      { name: "Mayonnaise", amount: 0.75, unit: "cup" },
+      { name: "Tandoori masala", amount: 2, unit: "tsp" },
+      { name: "Kashmiri red chilli powder (for color)", amount: 1, unit: "tsp" },
+      { name: "Garlic paste", amount: 2, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tsp" },
+      { name: "Smoked paprika / liquid smoke (optional)", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [{ title: "Blend and chill", content: "Blend all ingredients until smooth (or mix well by hand for chunky texture). Taste and adjust salt/lemon. Refrigerate 30 min for flavors to meld. Keeps 5-7 days.", timerSeconds: null }],
+    notes: [],
+  },
+{
+    id: "yogurt-protein-sauces",
+    category: "sauces",
+    title: "Yogurt Protein Sauces (8 Flavors)",
+    description: "High-protein dips and sauces using Greek yogurt as base. For wraps, bowls, grilled chicken, salads.",
+    baseServings: 4, calories: "~34 cal/serving", totalTime: 5,
+    macros: { protein: "1.7g", carbs: "3.4g", fat: "1.5g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Potassium"],
+    variations: [
+      { label: "Classic Tzatziki", calories: "~68 cal", macros: { protein: "1.8g", carbs: "4.2g", fat: "4.9g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"] },
+      { label: "Mint Raita", calories: "~36 cal", macros: { protein: "1.7g", carbs: "3.7g", fat: "1.5g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Potassium"] },
+      { label: "Harissa Yogurt", calories: "~50 cal", macros: { protein: "1.9g", carbs: "4.4g", fat: "2.7g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"] },
+      { label: "Chipotle Ranch", calories: "~40 cal", macros: { protein: "1.9g", carbs: "4.5g", fat: "1.6g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Potassium"] },
+      { label: "Everything Bagel", calories: "~58 cal", macros: { protein: "2.6g", carbs: "7.5g", fat: "2.0g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Potassium"] },
+      { label: "Sriracha Mayo-Style", calories: "~46 cal", macros: { protein: "1.7g", carbs: "3.8g", fat: "2.6g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Potassium"] },
+      { label: "Tandoori Dip", calories: "~39 cal", macros: { protein: "1.9g", carbs: "4.3g", fat: "1.6g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Potassium"] },
+      { label: "Herb Garden", calories: "~46 cal", macros: { protein: "1.8g", carbs: "3.8g", fat: "2.6g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"] }
+    ],
+    tags: ["sauce", "yogurt", "high-protein", "dip", "healthy"],
+    ingredients: [
+      { name: "Greek yogurt (base for all)", amount: 1, unit: "cup" },
+      { name: "Salt", amount: 0.5, unit: "tsp" },
+      { name: "Lemon juice", amount: 1, unit: "tbsp" },
+    ],
+    steps: [{ title: "Pick a flavor", content: "Mix Greek yogurt base with any flavor combo below. Adjust salt/lemon to taste. Refrigerate 30 min for best flavor.", timerSeconds: null }],
+    notes: [
+      { label: "1. Classic Tzatziki", text: "Grated cucumber (squeezed dry) + 2 garlic cloves + 1 tbsp olive oil + 1 tbsp dill. Mediterranean standard." },
+      { label: "2. Mint Raita", text: "2 tbsp chopped mint + 0.5 tsp cumin powder + pinch of chaat masala. Indian classic with biryani." },
+      { label: "3. Harissa Yogurt", text: "1-2 tsp harissa paste + 1 tsp olive oil + pinch smoked paprika. Smoky, spicy North African." },
+      { label: "4. Chipotle Ranch", text: "1 tbsp chipotle in adobo (blended) + 1 tsp garlic powder + 1 tsp onion powder + 1 tbsp chives. Smoky, creamy Tex-Mex." },
+      { label: "5. Everything Bagel", text: "2 tbsp everything bagel seasoning + 1 tsp garlic powder. Yes, it works." },
+      { label: "6. Sriracha Mayo-Style", text: "1-2 tbsp sriracha + 1 tsp sesame oil + 1 tsp rice vinegar. Spicy Asian-fusion." },
+      { label: "7. Tandoori Dip", text: "1 tsp tandoori masala + 0.5 tsp cumin + 0.5 tsp paprika + pinch of turmeric. Smoky Indian." },
+      { label: "8. Herb Garden", text: "2 tbsp each: chopped dill, parsley, chives + 1 garlic clove + 1 tsp olive oil. Fresh and green." },
+    ],
+  },
+{
+    id: "mango-chia",
+    category: "desserts",
+    title: "Mango Chia Pudding",
+    description: "Overnight breakfast or dessert — chia seeds + mango + coconut milk. High fiber, no cooking.",
+    baseServings: 4, calories: "~112 cal/serving", totalTime: 5,
+    macros: { protein: "2.2g", carbs: "9.2g", fat: "7.4g" }, microHighlights: ["Calcium", "Vitamin C", "Healthy Fats", "Vitamin A", "Potassium"],
+    tags: ["dessert", "healthy", "no-maida"],
+    ingredients: [
+      { name: "Chia seeds", amount: 3, unit: "tbsp" },
+      { name: "Coconut milk (or any milk)", amount: 1, unit: "cup" },
+      { name: "Mango puree", amount: 0.5, unit: "cup" },
+      { name: "Honey", amount: 1, unit: "tbsp" },
+      { name: "Vanilla", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Mix and chill", content: "Whisk chia seeds into milk. Add honey and vanilla. Refrigerate overnight (or min 4 hours). Top with mango puree before serving.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Ratio", text: "3 tbsp chia : 1 cup liquid is the golden ratio. More chia = thicker pudding." }
+    ],
+  },
+{
+    id: "mango-gummies",
+    category: "desserts",
+    title: "Mango Gummies",
+    description: "Healthy homemade gummies — just mango puree + gelatin. No sugar added.",
+    baseServings: 4, calories: "~58 cal/gummy", totalTime: 10,
+    macros: { protein: "1.6g", carbs: "11.5g", fat: "0.7g" }, microHighlights: ["Vitamin C", "Vitamin A"],
+    variations: [
+      { label: "Gelatin (default)", calories: "~58 cal", macros: { protein: "1.6g", carbs: "11.5g", fat: "0.7g" }, microHighlights: ["Vitamin C", "Vitamin A"] },
+      { label: "Agar-Agar (vegan)", calories: "~42 cal", macros: { protein: "1.0g", carbs: "8.8g", fat: "0.3g" }, microHighlights: ["Vitamin C", "Vitamin A"] }
+    ],
+    tags: ["dessert", "healthy", "no-maida"],
+    ingredients: [
+      { name: "Mango puree", amount: 1, unit: "cup" },
+      { name: "Gelatin powder", amount: 2, unit: "tbsp" },
+      { name: "Honey (optional)", amount: 1, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Heat puree", content: "Warm mango puree gently (do not boil). Sprinkle gelatin, whisk until dissolved.", timerSeconds: null },
+      { title: "Pour and set", content: "Pour into silicone molds. Refrigerate 2-3 hours until firm.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "Vegan option", text: "Use agar-agar instead of gelatin — 1 tsp agar per 1 cup liquid. Boil agar in puree for 2 min." }
+    ],
+  },
+{
+    id: "mango-ice-cream",
+    category: "desserts",
+    title: "Mango Ice Cream (No Machine)",
+    description: "3 ingredients — mango + cream + condensed milk. No ice cream maker needed.",
+    baseServings: 4, calories: "~269 cal/scoop", totalTime: 15,
+    macros: { protein: "4.8g", carbs: "13.2g", fat: "21.8g" }, microHighlights: ["Calcium", "Vitamin C", "Vitamin A"],
+    tags: ["dessert", "healthy", "no-maida"],
+    ingredients: [
+      { name: "Ripe mango puree", amount: 2, unit: "cup" },
+      { name: "Heavy cream (whipped)", amount: 1, unit: "cup" },
+      { name: "Condensed milk", amount: 0.5, unit: "cup" }
+    ],
+    steps: [
+      { title: "Whip cream", content: "Whip heavy cream to stiff peaks.", timerSeconds: null },
+      { title: "Mix", content: "Gently fold mango puree and condensed milk into whipped cream.", timerSeconds: null },
+      { title: "Freeze", content: "Pour into container, cover with cling wrap (touching surface to prevent crystals). Freeze 6-8 hours.", timerSeconds: null }
+    ],
+    notes: [
+      { label: "No crystals", text: "Cling wrap touching the surface prevents ice crystals. Or stir once after 2 hours of freezing." }
+    ],
+  },
+{
+    id: "mango-paneer-cups",
+    category: "desserts",
+    title: "Mango Paneer Dessert Cups",
+    description: "Layered dessert — mango puree + sweetened crumbled paneer. Quick Indian fusion.",
+    baseServings: 4, calories: "~156 cal/cup", totalTime: 10,
+    macros: { protein: "7.5g", carbs: "15.0g", fat: "7.3g" }, microHighlights: ["Calcium", "Vitamin C", "Protein", "Vitamin A"],
+    tags: ["dessert", "healthy", "no-maida"],
+    ingredients: [
+      { name: "Mango puree", amount: 1, unit: "cup" },
+      { name: "Paneer (crumbled)", amount: 1, unit: "cup" },
+      { name: "Sugar/honey", amount: 2, unit: "tbsp" },
+      { name: "Cardamom powder", amount: 0.25, unit: "tsp" },
+      { name: "Chopped pistachios", amount: 1, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Sweeten paneer", content: "Mix crumbled paneer with sugar and cardamom.", timerSeconds: null },
+      { title: "Layer", content: "Alternate layers of mango puree and sweetened paneer in cups. Top with pistachios.", timerSeconds: null }
+    ],
+    notes: [
+
+    ],
+  },
+{
+    id: "mango-sticky-rice",
+    category: "desserts",
+    title: "Mango Sticky Rice",
+    description: "Thai classic — glutinous rice + coconut cream + ripe mango. Sweet, creamy, tropical.",
+    baseServings: 4, calories: "~295 cal/serving", totalTime: 40,
+    macros: { protein: "7.0g", carbs: "53.4g", fat: "5.9g" }, microHighlights: ["Calcium", "Vitamin C", "Healthy Fats", "Vitamin A", "Potassium"],
+    tags: ["dessert", "healthy", "no-maida"],
+    ingredients: [
+      { name: "Glutinous (sticky) rice", amount: 1, unit: "cup" },
+      { name: "Coconut milk", amount: 1, unit: "cup" },
+      { name: "Sugar", amount: 3, unit: "tbsp" },
+      { name: "Salt", amount: 0.25, unit: "tsp" },
+      { name: "Ripe mango (sliced)", amount: 2, unit: "pcs" }
+    ],
+    steps: [
+      { title: "Soak rice", content: "Soak sticky rice in water for at least 4 hours (overnight is best).", timerSeconds: null },
+      { title: "Steam rice", content: "Drain and steam rice for 20-25 min until translucent and tender.", timerSeconds: 1500 },
+      { title: "Make coconut sauce", content: "Heat coconut milk + sugar + salt until sugar dissolves. Do not boil.", timerSeconds: null },
+      { title: "Combine", content: "Pour 3/4 of coconut sauce over hot rice. Let absorb 10 min. Serve with sliced mango, drizzle remaining sauce.", timerSeconds: 600 }
+    ],
+    notes: [
+      { label: "Key tip", text: "Pour coconut sauce over HOT rice — it absorbs much better. Let it sit covered for 10 min." }
+    ],
+  },
+{
+    id: "oats-ragi-choco-muffins",
+    category: "desserts",
+    title: "Oats & Ragi Chocolate Muffins",
+    description: "Ragi + oats + cocoa + jaggery — fudgy, rich, no maida. Higher protein than regular muffins.",
+    baseServings: 4, calories: "~301 cal/muffin", totalTime: 25,
+    macros: { protein: "4.1g", carbs: "44.0g", fat: "12.1g" }, microHighlights: ["Iron", "Calcium", "Fiber", "Protein", "Potassium"],
+    tags: ["dessert", "healthy", "no-maida"],
+    ingredients: [
+      { name: "Ragi flour", amount: 0.5, unit: "cup" },
+      { name: "Oats (blended to flour)", amount: 0.5, unit: "cup" },
+      { name: "Cocoa powder", amount: 3, unit: "tbsp" },
+      { name: "Jaggery powder", amount: 0.5, unit: "cup" },
+      { name: "Yogurt", amount: 0.25, unit: "cup" },
+      { name: "Milk", amount: 0.25, unit: "cup" },
+      { name: "Oil", amount: 3, unit: "tbsp" },
+      { name: "Baking powder", amount: 1, unit: "tsp" },
+      { name: "Baking soda", amount: 0.25, unit: "tsp" },
+      { name: "Vanilla", amount: 1, unit: "tsp" },
+      { name: "Dark chocolate chips (optional)", amount: 2, unit: "tbsp" }
+    ],
+    steps: [
+      { title: "Mix dry", content: "Whisk ragi, oat flour, cocoa, baking powder, baking soda.", timerSeconds: null },
+      { title: "Mix wet", content: "Whisk yogurt, milk, oil, vanilla, dissolved jaggery.", timerSeconds: null },
+      { title: "Combine and bake", content: "Fold wet into dry. Add chocolate chips if using. Pour into muffin tin. Bake 350°F for 18-22 min.", timerSeconds: 1320 }
+    ],
+    notes: [
+      { label: "Texture", text: "Ragi + oats gives a denser, earthier muffin. The cocoa masks ragi's distinct taste. Add 1 tbsp yogurt if too dry." }
+    ],
+  },
+{
+    id: "ragi-choco-lava",
+    category: "desserts",
+    title: "Ragi Choco Lava Balls",
+    description: "No maida, no refined sugar — ragi + jaggery + dark chocolate in an appe pan.",
+    baseServings: 4, calories: "~164 cal/ball", totalTime: 15,
+    macros: { protein: "3.9g", carbs: "26.8g", fat: "4.5g" }, microHighlights: ["Iron", "Calcium", "Fiber"],
+    tags: ["dessert", "healthy", "no-maida"],
+    ingredients: [
+      { name: "Ragi (finger millet flour)", amount: 0.5, unit: "cup" },
+      { name: "Jaggery powder", amount: 3, unit: "tbsp" },
+      { name: "Cocoa powder", amount: 1, unit: "tbsp" },
+      { name: "Baking soda", amount: 0.25, unit: "tsp" },
+      { name: "Milk (room temp)", amount: 0.25, unit: "cup" },
+      { name: "Melted butter", amount: 1, unit: "tbsp" },
+      { name: "Vanilla essence", amount: 0.25, unit: "tsp" },
+      { name: "Dark chocolate cubes", amount: 8, unit: "pcs" }
+    ],
+    steps: [
+      { title: "Mix dry", content: "Combine ragi, jaggery, cocoa, and baking soda. Whisk until blended.", timerSeconds: null },
+      { title: "Add wet", content: "Pour in milk, melted butter, and vanilla. Mix until smooth, lump-free batter.", timerSeconds: null },
+      { title: "Fill appe pan", content: "Grease appe pan. Pour batter halfway. Place chocolate cube in center, cover with more batter.", timerSeconds: null },
+      { title: "Cook", content: "Cover, cook on low-medium heat 5 min until bottoms set and golden.", timerSeconds: 300 },
+      { title: "Flip and finish", content: "Gently flip each ball, cook uncovered 1-2 more minutes.", timerSeconds: 120 }
+    ],
+    notes: [
+      { label: "Moisture tip", text: "If crumbly, add 1 tbsp yogurt to batter. Pull early — chocolate should be molten inside. Reheat in damp paper towel." },
+      { label: "Baking powder sub", text: "Can use baking powder (double the amount) instead of baking soda. Slightly less tangy." }
+    ],
+  },
+{
+    id: "ww-jaggery-muffins",
+    category: "desserts",
+    title: "Whole Wheat Jaggery Muffins",
+    description: "No maida, no refined sugar — whole wheat + jaggery + yogurt. Warm, earthy, naturally sweet.",
+    baseServings: 4, calories: "~286 cal/muffin", totalTime: 25,
+    macros: { protein: "4.6g", carbs: "45.4g", fat: "9.5g" }, microHighlights: ["Iron", "Calcium", "Fiber", "Protein", "Potassium"],
+    tags: ["dessert", "healthy", "no-maida"],
+    ingredients: [
+      { name: "Whole wheat flour", amount: 1, unit: "cup" },
+      { name: "Jaggery powder (finely grated)", amount: 0.5, unit: "cup" },
+      { name: "Yogurt (dahi)", amount: 0.25, unit: "cup" },
+      { name: "Milk", amount: 0.25, unit: "cup" },
+      { name: "Oil / melted butter", amount: 3, unit: "tbsp" },
+      { name: "Baking powder", amount: 1, unit: "tsp" },
+      { name: "Baking soda", amount: 0.25, unit: "tsp" },
+      { name: "Vanilla extract", amount: 1, unit: "tsp" },
+      { name: "Cinnamon (optional)", amount: 0.5, unit: "tsp" }
+    ],
+    steps: [
+      { title: "Mix dry", content: "Whisk whole wheat flour, baking powder, baking soda, cinnamon.", timerSeconds: null },
+      { title: "Mix wet", content: "In another bowl, whisk yogurt, milk, oil, vanilla, and jaggery until jaggery dissolves.", timerSeconds: null },
+      { title: "Combine", content: "Pour wet into dry. Fold gently — do not overmix. Lumpy is fine.", timerSeconds: null },
+      { title: "Bake", content: "Pour into greased muffin tin (or mini silicone tray). Bake at 350°F (175°C) for 18-22 min. Mini tray: 10-12 min.", timerSeconds: 1320 }
+    ],
+    notes: [
+      { label: "Grainy fix", text: "If texture is grainy: undissolved jaggery + wheat coarseness. Fix: use oat/almond/jowar flour blend, or dissolve jaggery in warm milk first." },
+      { label: "Mini tray", text: "Place mini silicone tray on a rigid baking sheet for stability. 10-12 min at 350°F. Middle rack." },
+      { label: "Frosting", text: "Healthy option: hung curd or full-fat Greek yogurt + honey + vanilla. Pipe or spread on cooled muffins." }
+    ],
+  }
+];
+
+
+function formatAmount(amount, unit) {
+  if (amount === 0) return "";
+  if (Number.isInteger(amount)) return `${amount}`;
+  const frac = amount % 1;
+  const whole = Math.floor(amount);
+  const fracs = { 0.25: "¼", 0.33: "⅓", 0.5: "½", 0.67: "⅔", 0.75: "¾" };
+  const closest = Object.keys(fracs).reduce((a, b) => Math.abs(b - frac) < Math.abs(a - frac) ? b : a);
+  if (Math.abs(closest - frac) < 0.05) {
+    return whole > 0 ? `${whole}${fracs[closest]}` : fracs[closest];
+  }
+  return amount % 1 === 0 ? `${amount}` : amount.toFixed(1);
+}
+
+function RecipeDetail({ recipe, onBack, servings, setServings }) {
+  const [checkedSteps, setCheckedSteps] = useState({});
+  const [expandedNote, setExpandedNote] = useState(null);
+  const [activeTimer, setActiveTimer] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    if (activeTimer === null || timeLeft <= 0) return;
+    const interval = setInterval(() => {
+      setTimeLeft((t) => {
+        if (t <= 1) { clearInterval(interval); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [activeTimer, timeLeft]);
+
+  const scale = servings / (recipe.baseServings || 4);
+  const formatTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#FFFCF7" }}>
+      <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#FFFCF7", borderBottom: "1px solid #EDE8DF", padding: "14px 20px", display: "flex", alignItems: "center", gap: 12 }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", padding: 4 }}>←</button>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color: "#3B1F0B", margin: 0, flex: 1, lineHeight: 1.3 }}>{recipe.title}</h2>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
+          {recipe.calories && <span style={{ fontSize: 11, background: "#FEF3C7", color: "#92400E", padding: "3px 8px", borderRadius: 12, fontWeight: 600 }}>{recipe.calories}</span>}
+          {recipe.totalTime && <span style={{ fontSize: 11, background: "#ECFDF5", color: "#065F46", padding: "3px 8px", borderRadius: 12, fontWeight: 600 }}>{recipe.totalTime < 60 ? `${recipe.totalTime}m` : `${Math.floor(recipe.totalTime/60)}h${recipe.totalTime%60?recipe.totalTime%60+"m":""}`}</span>}
+        </div>
+      </div>
+
+      <div style={{ padding: "16px 20px" }}>
+        <p style={{ fontSize: 14, color: "#78716C", marginBottom: 16, lineHeight: 1.5 }}>{recipe.description}</p>
+
+        {recipe.macros && (
+          <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+            <div style={{ flex: 1, background: "#fff", border: "1px solid #EDE8DF", borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#3B1F0B" }}>{recipe.macros.protein}</div>
+              <div style={{ fontSize: 10, color: "#78716C", textTransform: "uppercase", letterSpacing: 0.5 }}>Protein</div>
+            </div>
+            <div style={{ flex: 1, background: "#fff", border: "1px solid #EDE8DF", borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#3B1F0B" }}>{recipe.macros.carbs}</div>
+              <div style={{ fontSize: 10, color: "#78716C", textTransform: "uppercase", letterSpacing: 0.5 }}>Carbs</div>
+            </div>
+            <div style={{ flex: 1, background: "#fff", border: "1px solid #EDE8DF", borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#3B1F0B" }}>{recipe.macros.fat}</div>
+              <div style={{ fontSize: 10, color: "#78716C", textTransform: "uppercase", letterSpacing: 0.5 }}>Fat</div>
+            </div>
+          </div>
+        )}
+
+        {recipe.microHighlights && recipe.microHighlights.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 6 }}>
+            {recipe.microHighlights.map((tag, i) => (
+              <span key={i} style={{ fontSize: 11, background: "#E8F3EC", color: "#166534", padding: "4px 10px", borderRadius: 14, fontWeight: 600 }}>
+                ✓ {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {recipe.macros && (
+          <p style={{ fontSize: 11, color: "#A8A29E", marginBottom: 16, marginTop: 0 }}>Calories, macros, and nutrient highlights are calculated estimates, not lab-tested values.</p>
+        )}
+
+        {recipe.variations && recipe.variations.length > 0 && (
+          <>
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#92400E", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Nutrition by Variation</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+              {recipe.variations.map((v, i) => (
+                <div key={i} style={{ background: "#fff", borderRadius: 14, border: "1px solid #EDE8DF", padding: "12px 16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#3B1F0B" }}>{v.label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#92400E" }}>{v.calories}</span>
+                  </div>
+                  <div style={{ display: "flex", gap: 14, marginBottom: v.microHighlights && v.microHighlights.length > 0 ? 8 : 0 }}>
+                    <span style={{ fontSize: 11, color: "#78716C" }}><b style={{ color: "#3B1F0B" }}>{v.macros.protein}</b> protein</span>
+                    <span style={{ fontSize: 11, color: "#78716C" }}><b style={{ color: "#3B1F0B" }}>{v.macros.carbs}</b> carbs</span>
+                    <span style={{ fontSize: 11, color: "#78716C" }}><b style={{ color: "#3B1F0B" }}>{v.macros.fat}</b> fat</span>
+                  </div>
+                  {v.microHighlights && v.microHighlights.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                      {v.microHighlights.map((tag, j) => (
+                        <span key={j} style={{ fontSize: 10, background: "#E8F3EC", color: "#166534", padding: "2px 8px", borderRadius: 12, fontWeight: 600 }}>
+                          ✓ {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: "#3B1F0B" }}>Servings</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#F5F0E8", borderRadius: 24, padding: "4px 6px" }}>
+            <button onClick={() => setServings(Math.max(1, servings - 1))} style={{ width: 30, height: 30, borderRadius: "50%", border: "none", background: "#fff", fontSize: 16, cursor: "pointer", fontWeight: 700, color: "#3B1F0B" }}>−</button>
+            <span style={{ fontSize: 15, fontWeight: 700, color: "#3B1F0B", minWidth: 20, textAlign: "center" }}>{servings}</span>
+            <button onClick={() => setServings(servings + 1)} style={{ width: 30, height: 30, borderRadius: "50%", border: "none", background: "#fff", fontSize: 16, cursor: "pointer", fontWeight: 700, color: "#3B1F0B" }}>+</button>
+          </div>
+        </div>
+
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: "#92400E", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Ingredients</h3>
+        <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #EDE8DF", padding: "4px 0", marginBottom: 24 }}>
+          {recipe.ingredients.map((ing, i) => {
+            const isHeader = ing.amount === 0 && ing.unit === "pcs" && ing.name.startsWith("—");
+            return (
+              <div key={i} style={{ padding: isHeader ? "10px 16px 4px" : "8px 16px", borderBottom: i < recipe.ingredients.length - 1 ? "1px solid #F5F0E8" : "none" }}>
+                {isHeader ? (
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "#92400E", textTransform: "uppercase" }}>{ing.name.replace(/—/g, "").trim()}</span>
+                ) : (
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 14, color: "#3B1F0B" }}>{ing.name}</span>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: "#78716C", flexShrink: 0 }}>
+                      {formatAmount(ing.amount * scale, ing.unit)}{ing.unit && ing.unit !== "pcs" ? ` ${ing.unit}` : ""}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {recipe.steps && recipe.steps.length > 0 && recipe.steps[0].content && (
+          <>
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#92400E", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Steps</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+              {recipe.steps.map((step, i) => (
+                <div key={i} style={{ background: "#fff", borderRadius: 14, border: "1px solid #EDE8DF", padding: "14px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                    <button onClick={() => setCheckedSteps({ ...checkedSteps, [i]: !checkedSteps[i] })} style={{
+                      width: 24, height: 24, borderRadius: "50%", border: checkedSteps[i] ? "none" : "2px solid #D6CFC3",
+                      background: checkedSteps[i] ? "#059669" : "transparent", flexShrink: 0, cursor: "pointer", marginTop: 1,
+                      display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14,
+                    }}>{checkedSteps[i] ? "✓" : ""}</button>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "#3B1F0B" }}>{step.title}</span>
+                      <p style={{ fontSize: 13, color: "#78716C", margin: "4px 0 0", lineHeight: 1.5, textDecoration: checkedSteps[i] ? "line-through" : "none", opacity: checkedSteps[i] ? 0.5 : 1 }}>{step.content}</p>
+                      {step.timerSeconds && (
+                        <button onClick={() => { setActiveTimer(i); setTimeLeft(step.timerSeconds); }} style={{
+                          marginTop: 8, padding: "6px 14px", borderRadius: 20, border: "1px solid #D6CFC3",
+                          background: activeTimer === i && timeLeft > 0 ? "#059669" : "#F5F0E8",
+                          color: activeTimer === i && timeLeft > 0 ? "#fff" : "#3B1F0B", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                        }}>
+                          {activeTimer === i && timeLeft > 0 ? `⏱ ${formatTime(timeLeft)}` : `⏱ ${formatTime(step.timerSeconds)}`}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {recipe.notes && recipe.notes.length > 0 && (
+          <>
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#92400E", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Tips & Notes</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 40 }}>
+              {recipe.notes.map((note, i) => (
+                <div key={i} style={{ background: "#fff", borderRadius: 14, border: "1px solid #EDE8DF", overflow: "hidden" }}>
+                  <button onClick={() => setExpandedNote(expandedNote === i ? null : i)} style={{
+                    width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
+                    padding: "12px 16px", background: "none", border: "none", cursor: "pointer",
+                  }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#92400E", textAlign: "left" }}>💡 {note.label}</span>
+                    <span style={{ fontSize: 16, color: "#92400E", transform: expandedNote === i ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s" }}>▾</span>
+                  </button>
+                  {expandedNote === i && (
+                    <div style={{ padding: "0 16px 14px", fontSize: 13, color: "#78716C", lineHeight: 1.6 }}>{note.text}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RecipeCard({ recipe, onClick }) {
+  return (
+    <button onClick={onClick} style={{
+      width: "100%", textAlign: "left", background: "#fff", border: "1px solid #EDE8DF",
+      borderRadius: 16, padding: "18px 20px", cursor: "pointer", transition: "all 0.2s",
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, color: "#3B1F0B", margin: "0 0 6px", flex: 1 }}>{recipe.title}</h3>
+        <div style={{ display: "flex", gap: 4, flexShrink: 0, marginLeft: 8 }}>
+          {recipe.calories && <span style={{ fontSize: 10, background: "#FEF3C7", color: "#92400E", padding: "2px 6px", borderRadius: 10, fontWeight: 600 }}>{recipe.calories.replace("~","")}</span>}
+        </div>
+      </div>
+      <p style={{ fontSize: 13, color: "#78716C", margin: 0, lineHeight: 1.4 }}>{recipe.description}</p>
+    </button>
+  );
+}
+
+export default function CookbookApp() {
+  const [recipes, setRecipes] = useState(DEFAULT_RECIPES);
+  const [selectedId, setSelectedId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [drinkTiming, setDrinkTiming] = useState(null);
+  const [servings, setServings] = useState(4);
+  const [loaded, setLoaded] = useState(false);
+
+  const categories = [
+    { key: "all", label: "All", icon: "📖" },
+    { key: "drinks", label: "Drinks", icon: "🍵" },
+    { key: "meals", label: "Meals", icon: "🍽️" },
+    { key: "marinades", label: "Marinades", icon: "🍗" },
+    { key: "breads", label: "Breads", icon: "🫓" },
+    { key: "masalas", label: "Masalas", icon: "🧂" },
+    { key: "sauces", label: "Sauces", icon: "🥣" },
+    { key: "desserts", label: "Desserts", icon: "🍫" },
+  ];
+
+  const drinkTimings = [
+    { key: null, label: "All", icon: "✨" },
+    { key: "morning", label: "Morning", icon: "☀️" },
+    { key: "with-meals", label: "With Meals", icon: "🍽️" },
+    { key: "bedtime", label: "Bedtime", icon: "🌙" },
+    { key: "anytime", label: "Anytime", icon: "✨" },
+  ];
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await window.storage.get("cookbook-recipes");
+        if (result?.value) {
+          const stored = JSON.parse(result.value);
+          if (stored.length > 0) setRecipes(stored);
+        }
+      } catch (e) {}
+      setLoaded(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    (async () => {
+      try { await window.storage.set("cookbook-recipes", JSON.stringify(recipes)); } catch (e) {}
+    })();
+  }, [recipes, loaded]);
+
+  const selectedRecipe = recipes.find((r) => r.id === selectedId);
+
+  const filtered = recipes.filter((r) => {
+    if (category !== "all" && r.category !== category) return false;
+    if (category === "drinks" && drinkTiming && r.timing !== drinkTiming) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q) || (r.tags && r.tags.some((t) => t.toLowerCase().includes(q)));
+    }
+    return true;
+  });
+
+  if (selectedRecipe) {
+    return <RecipeDetail recipe={selectedRecipe} onBack={() => setSelectedId(null)} servings={servings} setServings={setServings} />;
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#FFFCF7" }}>
+      <div style={{ padding: "20px 20px 10px" }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#3B1F0B", margin: "0 0 4px" }}>📖 Mehtab's Cookbook</h1>
+        <p style={{ fontSize: 13, color: "#78716C", margin: "0 0 16px" }}>{recipes.length} recipes</p>
+
+        <input
+          type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search recipes..."
+          style={{ width: "100%", padding: "12px 16px", borderRadius: 14, border: "1px solid #EDE8DF", background: "#fff", fontSize: 15, outline: "none", boxSizing: "border-box", marginBottom: 14 }}
+        />
+
+        <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 6, WebkitOverflowScrolling: "touch" }}>
+          {categories.map((cat) => {
+            const count = cat.key === "all" ? recipes.length : recipes.filter((r) => r.category === cat.key).length;
+            return (
+              <button key={cat.key} onClick={() => { setCategory(cat.key); setDrinkTiming(null); }}
+                style={{
+                  padding: "8px 14px", borderRadius: 24, border: "none", flexShrink: 0, cursor: "pointer", fontSize: 13, fontWeight: 600,
+                  background: category === cat.key ? "#3B1F0B" : "#F5F0E8",
+                  color: category === cat.key ? "#FFFCF7" : "#78716C",
+                }}>
+                {cat.icon} {cat.label} <span style={{ opacity: 0.7, fontSize: 11 }}>({count})</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {category === "drinks" && (
+          <div style={{ display: "flex", gap: 6, marginTop: 8, overflowX: "auto", paddingBottom: 4 }}>
+            {drinkTimings.map((dt) => (
+              <button key={dt.key || "all"} onClick={() => setDrinkTiming(dt.key)}
+                style={{
+                  padding: "6px 12px", borderRadius: 20, border: "none", flexShrink: 0, cursor: "pointer", fontSize: 12, fontWeight: 600,
+                  background: drinkTiming === dt.key ? "#92400E" : "#FEF3C7",
+                  color: drinkTiming === dt.key ? "#fff" : "#92400E",
+                }}>
+                {dt.icon} {dt.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: "10px 20px 40px", display: "flex", flexDirection: "column", gap: 10 }}>
+        {filtered.map((recipe) => (
+          <RecipeCard key={recipe.id} recipe={recipe} onClick={() => { setSelectedId(recipe.id); setServings(recipe.baseServings || 4); }} />
+        ))}
+        {filtered.length === 0 && (
+          <p style={{ textAlign: "center", color: "#78716C", fontSize: 14, marginTop: 40 }}>No recipes found</p>
+        )}
+      </div>
+    </div>
+  );
+}
