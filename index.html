@@ -8847,75 +8847,86 @@ const DEFAULT_RECIPES = [{
   id: "sauce-quick-5min-pizza",
   category: "sauces",
   title: "Quick 5-Minute Pizza Sauce",
-  description: "No roasting, no fuss — canned tomatoes and pantry seasoning for days you need pizza sauce fast. Healthier than jarred (no added sugar, no preservatives).",
-  baseServings: 8,
-  calories: "~18 cal/serving",
-  totalTime: 5,
+  description: "No canned tomatoes needed — paneer, zucchini, carrot, and ketchup blend into a creamy, high-protein pizza sauce in 5 minutes flat.",
+  baseServings: 6,
+  calories: "~38 cal/serving",
+  totalTime: 7,
   macros: {
-    protein: "0.6g",
-    carbs: "3.2g",
-    fat: "0.7g"
+    protein: "1.8g",
+    carbs: "4.2g",
+    fat: "1.6g"
   },
-  microHighlights: ["Vitamin C"],
-  tags: ["healthy", "quick", "pizza", "no-cook"],
+  microHighlights: ["Protein", "Calcium", "Vitamin C", "Vitamin A"],
+  tags: ["healthy", "quick", "pizza", "no-cook", "high-protein"],
   ingredients: [{
-    name: "Canned crushed tomatoes (or tomato puree)",
-    amount: 1,
+    name: "Paneer, crumbled",
+    amount: 0.33,
+    unit: "cup"
+  }, {
+    name: "Zucchini, chopped",
+    amount: 0.33,
+    unit: "cup"
+  }, {
+    name: "Carrot, finely grated (or small rounds)",
+    amount: 2,
+    unit: "tbsp"
+  }, {
+    name: "Tomato ketchup (or marinara if available)",
+    amount: 3,
+    unit: "tbsp"
+  }, {
+    name: "Basil, cilantro, or spinach leaves (light handful)",
+    amount: 0.25,
     unit: "cup"
   }, {
     name: "Garlic powder",
-    amount: 0.5,
-    unit: "tsp"
-  }, {
-    name: "Onion powder",
     amount: 0.25,
     unit: "tsp"
   }, {
     name: "Dried oregano",
-    amount: 0.5,
-    unit: "tsp"
-  }, {
-    name: "Dried basil",
-    amount: 0.5,
-    unit: "tsp"
-  }, {
-    name: "Olive oil",
-    amount: 1,
-    unit: "tsp"
-  }, {
-    name: "Salt",
     amount: 0.25,
     unit: "tsp"
   }, {
-    name: "Black pepper",
+    name: "Chilli flakes (pinch)",
     amount: 0.125,
     unit: "tsp"
   }, {
-    name: "Sugar or honey (optional, to cut acidity)",
-    amount: 0.5,
+    name: "Salt (to taste — go light)",
+    amount: 0.125,
     unit: "tsp"
+  }, {
+    name: "Water (only if needed to blend)",
+    amount: 1,
+    unit: "tbsp"
   }],
   steps: [{
-    title: "Mix",
-    content: "Whisk all ingredients together in a bowl until combined. That's it — no cooking required if your canned tomatoes are good quality.",
-    timerSeconds: null
+    title: "Soften zucchini and carrot",
+    content: "Microwave chopped zucchini and grated carrot together for 90 seconds until soft. If using carrot cut into small rounds instead of grated, microwave 2-2.5 min and check they're fork-soft before blending.",
+    timerSeconds: 90
   }, {
-    title: "Optional: quick simmer",
-    content: "For a deeper, more melded flavor, simmer in a small pan on medium-low for 3-4 min instead of just mixing. Stir occasionally.",
-    timerSeconds: 210
+    title: "Blend",
+    content: "Add softened zucchini and carrot, paneer, ketchup, herbs, garlic powder, oregano, chilli flakes, and salt to a blender. Blend until completely smooth, 1-2 min (longer if using carrot rounds, to avoid any grit). Add water only if too thick to blend.",
+    timerSeconds: 90
+  }, {
+    title: "Taste and adjust",
+    content: "Taste before salting further — ketchup and paneer both bring some salt already.",
+    timerSeconds: null
   }],
   notes: [{
-    label: "No-cook works",
-    text: "Good quality canned crushed tomatoes are already cooked during canning — mixing raw is genuinely fine for a quick weeknight pizza. The quick simmer just deepens flavor if you have the extra 3-4 min."
+    label: "Why this works",
+    text: "Paneer adds creaminess and protein, zucchini adds body with zero detectable taste, carrot adds natural sweetness and vitamin A, and ketchup does double duty as tomato base plus built-in tang and sweetness — no extra sugar needed."
   }, {
-    label: "Cutting acidity",
-    text: "Canned tomatoes can taste sharp. A scant 1/2 tsp sugar or honey rounds it out without making it sweet — standard trick, not a health compromise at this amount."
+    label: "Carrot prep",
+    text: "Grated carrot blends smoothest and softens fastest. Small rounds work too but are thicker — give them extra microwave time (2-2.5 min vs 90 sec) and blend a bit longer to avoid grit."
+  }, {
+    label: "Greens caution",
+    text: "Go light on spinach specifically — too much turns the sauce bitter and brownish-green. Basil or cilantro are more forgiving in larger amounts."
+  }, {
+    label: "Not the \"clean\" option",
+    text: "This leans on ketchup for convenience, so it's not as minimally processed as the roasted veggie version — think of it as a healthier fallback for busy days, not a replacement for the from-scratch sauce."
   }, {
     label: "Storage",
-    text: "Keeps 5-7 days refrigerated in an airtight jar. Freezes well in ice cube portions for 2-3 months."
-  }, {
-    label: "Upgrade options",
-    text: "Stir in 1 tbsp of your High-Protein Roasted Pizza Sauce or Paneer-Cashew Mayo if you have leftovers — boosts protein and creaminess without extra time."
+    text: "Keeps 4-5 days refrigerated in an airtight jar (shorter than the canned-tomato version since paneer is fresh dairy). Not ideal for freezing — texture changes."
   }]
 }, {
   id: "mango-chia",
