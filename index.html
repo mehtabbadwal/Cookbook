@@ -7614,7 +7614,7 @@ const DEFAULT_RECIPES = [{
     fat: "13.4g"
   },
   microHighlights: ["Healthy Fats"],
-  tags: ["pasta-sauce", "italian", "garlic", "quick", "vegetarian", "no-cream"],
+  tags: ["pasta-sauce", "italian", "garlic", "quick", "vegetarian", "no-cream", "pasta"],
   ingredients: [{
     name: "Olive oil",
     amount: 0.25,
@@ -7667,7 +7667,7 @@ const DEFAULT_RECIPES = [{
     fat: "34.0g"
   },
   microHighlights: ["Calcium", "Protein"],
-  tags: ["pasta-sauce", "italian", "creamy", "quick"],
+  tags: ["pasta-sauce", "italian", "creamy", "quick", "pasta"],
   ingredients: [{
     name: "Butter",
     amount: 2,
@@ -7720,7 +7720,7 @@ const DEFAULT_RECIPES = [{
     fat: "4.0g"
   },
   microHighlights: ["Vitamin C", "Healthy Fats"],
-  tags: ["pasta-sauce", "italian", "spicy", "tomato", "vegetarian"],
+  tags: ["pasta-sauce", "italian", "spicy", "tomato", "vegetarian", "pasta"],
   ingredients: [{
     name: "Tomato puree",
     amount: 2,
@@ -7872,7 +7872,7 @@ const DEFAULT_RECIPES = [{
     fat: "3.3g"
   },
   microHighlights: ["Vitamin C", "Protein", "Healthy Fats"],
-  tags: ["sauce", "mayo", "dip", "restaurant-style"],
+  tags: ["sauce", "mayo", "dip", "restaurant-style", "dips-spreads"],
   ingredients: [{
     name: "Mayonnaise (eggless/regular)",
     amount: 0.75,
@@ -7912,7 +7912,7 @@ const DEFAULT_RECIPES = [{
   baseServings: 8,
   calories: "~60 cal/serving",
   totalTime: 310,
-  tags: ["healthy", "high-protein", "homemade"],
+  tags: ["healthy", "high-protein", "homemade", "dips-spreads"],
   macros: {
     protein: 4,
     carbs: 3,
@@ -8009,7 +8009,7 @@ const DEFAULT_RECIPES = [{
     fat: "21.1g"
   },
   microHighlights: ["Vitamin C"],
-  tags: ["sauce", "mayo", "dip", "restaurant-style"],
+  tags: ["sauce", "mayo", "dip", "restaurant-style", "dips-spreads"],
   ingredients: [{
     name: "Mayonnaise",
     amount: 0.75,
@@ -8059,7 +8059,7 @@ const DEFAULT_RECIPES = [{
     fat: "23.9g"
   },
   microHighlights: ["Calcium", "Protein", "Healthy Fats"],
-  tags: ["pasta-sauce", "italian", "basil", "no-cook", "vegetarian"],
+  tags: ["pasta-sauce", "italian", "basil", "no-cook", "vegetarian", "pasta"],
   ingredients: [{
     name: "Basil leaves",
     amount: 2,
@@ -8115,7 +8115,7 @@ const DEFAULT_RECIPES = [{
     fat: "13.1g"
   },
   microHighlights: ["Calcium", "Vitamin C"],
-  tags: ["pasta-sauce", "italian", "creamy", "tomato", "kid-friendly"],
+  tags: ["pasta-sauce", "italian", "creamy", "tomato", "kid-friendly", "pasta"],
   ingredients: [{
     name: "Tomato puree",
     amount: 1,
@@ -8223,7 +8223,7 @@ const DEFAULT_RECIPES = [{
     },
     microHighlights: ["Vitamin C", "Healthy Fats"]
   }],
-  tags: ["dressing", "salad", "healthy", "homemade"],
+  tags: ["dressing", "salad", "healthy", "homemade", "dips-spreads"],
   ingredients: [{
     name: "Olive oil (base for all)",
     amount: 3,
@@ -8279,7 +8279,7 @@ const DEFAULT_RECIPES = [{
     fat: "21.2g"
   },
   microHighlights: ["Vitamin C"],
-  tags: ["sauce", "mayo", "dip", "restaurant-style"],
+  tags: ["sauce", "mayo", "dip", "restaurant-style", "dips-spreads"],
   ingredients: [{
     name: "Mayonnaise",
     amount: 0.75,
@@ -8398,7 +8398,7 @@ const DEFAULT_RECIPES = [{
     },
     microHighlights: ["Calcium", "Vitamin C", "Protein", "Healthy Fats", "Potassium"]
   }],
-  tags: ["sauce", "yogurt", "high-protein", "dip", "healthy"],
+  tags: ["sauce", "yogurt", "high-protein", "dip", "healthy", "dips-spreads"],
   ingredients: [{
     name: "Greek yogurt (base for all)",
     amount: 1,
@@ -9668,6 +9668,7 @@ function CookbookApp() {
   const [category, setCategory] = useState("all");
   const [drinkTiming, setDrinkTiming] = useState(null);
   const [mealFilter, setMealFilter] = useState(null);
+  const [sauceFilter, setSauceFilter] = useState(null);
   const [servings, setServings] = useState(4);
   const [loaded, setLoaded] = useState(false);
   const categories = [{
@@ -9749,6 +9750,27 @@ function CookbookApp() {
     label: "Kid-Friendly",
     icon: "🧒"
   }];
+  const sauceFilters = [{
+    key: null,
+    label: "All",
+    icon: "✨"
+  }, {
+    key: "pasta",
+    label: "Pasta",
+    icon: "🍝"
+  }, {
+    key: "pizza",
+    label: "Pizza",
+    icon: "🍕"
+  }, {
+    key: "dips-spreads",
+    label: "Dips & Spreads",
+    icon: "🥗"
+  }, {
+    key: "chutney",
+    label: "Chutney",
+    icon: "🫙"
+  }];
   useEffect(() => {
     (async () => {
       try {
@@ -9774,6 +9796,7 @@ function CookbookApp() {
     if (category !== "all" && r.category !== category) return false;
     if (category === "drinks" && drinkTiming && r.timing !== drinkTiming) return false;
     if (category === "meals" && mealFilter && !(r.tags && r.tags.includes(mealFilter))) return false;
+    if (category === "sauces" && sauceFilter && !(r.tags && r.tags.includes(sauceFilter))) return false;
     if (search) {
       const q = search.toLowerCase();
       return r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q) || r.tags && r.tags.some(t => t.toLowerCase().includes(q));
@@ -9842,6 +9865,7 @@ function CookbookApp() {
         setCategory(cat.key);
         setDrinkTiming(null);
         setMealFilter(null);
+        setSauceFilter(null);
       },
       style: {
         padding: "8px 14px",
@@ -9904,7 +9928,29 @@ function CookbookApp() {
       background: mealFilter === mf.key ? "#166534" : "#DCFCE7",
       color: mealFilter === mf.key ? "#fff" : "#166534"
     }
-  }, mf.icon, " ", mf.label)))), /*#__PURE__*/React.createElement("div", {
+  }, mf.icon, " ", mf.label))), category === "sauces" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 6,
+      marginTop: 8,
+      overflowX: "auto",
+      paddingBottom: 4
+    }
+  }, sauceFilters.map(sf => /*#__PURE__*/React.createElement("button", {
+    key: sf.key || "all",
+    onClick: () => setSauceFilter(sf.key),
+    style: {
+      padding: "6px 12px",
+      borderRadius: 20,
+      border: "none",
+      flexShrink: 0,
+      cursor: "pointer",
+      fontSize: 12,
+      fontWeight: 600,
+      background: sauceFilter === sf.key ? "#9A3412" : "#FFEDD5",
+      color: sauceFilter === sf.key ? "#fff" : "#9A3412"
+    }
+  }, sf.icon, " ", sf.label)))), /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "10px 20px 40px",
       display: "flex",
