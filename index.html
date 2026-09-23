@@ -2017,6 +2017,100 @@ const DEFAULT_RECIPES = [{
     text: "No oven needed — stove-top with a lid works perfectly. Keep heat low-medium and don't lift lid for first 8 min."
   }]
 }, {
+  id: "meal-mini-pizza-roti-base",
+  category: "meals",
+  title: "Mini Pizza (Roti-Style Base)",
+  description: "Wheat + jowar + Greek yogurt dough, rolled slightly thicker than roti, cooked two-stage for a soft-yet-sturdy homemade pizza base. No yeast, no rising time.",
+  baseServings: 4,
+  calories: "~140 cal/base",
+  totalTime: 35,
+  macros: {
+    protein: "5.5g",
+    carbs: "20.0g",
+    fat: "3.2g"
+  },
+  microHighlights: ["Fiber", "Iron", "Protein"],
+  tags: ["healthy", "no-maida", "lunchbox", "kid-friendly", "dinner", "pizza"],
+  ingredients: [{
+    name: "Whole wheat flour",
+    amount: 0.5,
+    unit: "cup"
+  }, {
+    name: "Jowar flour",
+    amount: 0.5,
+    unit: "cup"
+  }, {
+    name: "Greek yogurt",
+    amount: 0.25,
+    unit: "cup"
+  }, {
+    name: "Baking powder",
+    amount: 0.5,
+    unit: "tsp"
+  }, {
+    name: "Baking soda",
+    amount: 0.25,
+    unit: "tsp"
+  }, {
+    name: "Salt",
+    amount: 0.25,
+    unit: "tsp"
+  }, {
+    name: "Water (as needed)",
+    amount: 2,
+    unit: "tbsp"
+  }, {
+    name: "Pizza sauce (see Quick 5-Min Pizza Sauce)",
+    amount: 3,
+    unit: "tbsp"
+  }, {
+    name: "Mozzarella cheese, shredded",
+    amount: 0.5,
+    unit: "cup"
+  }, {
+    name: "Toppings of choice (light)",
+    amount: 0.25,
+    unit: "cup"
+  }],
+  steps: [{
+    title: "Make dough",
+    content: "Mix whole wheat flour, jowar flour, baking powder, baking soda, and salt. Add Greek yogurt and bring together. Add water 1 tbsp at a time only if needed — dough should be soft and pliable like regular roti dough, not stiff.",
+    timerSeconds: null
+  }, {
+    title: "Rest",
+    content: "Cover and rest 20-30 min. This lets the jowar fully absorb moisture — don't skip, or the base can turn gummy in the middle once topped.",
+    timerSeconds: 1500
+  }, {
+    title: "Roll",
+    content: "Divide into 4 balls. Roll each out slightly thicker than a normal roti — keep the thickness EVEN across the whole base. Uneven rolling means thin spots burn while thick spots stay undercooked.",
+    timerSeconds: null
+  }, {
+    title: "Stage 1: dry cook",
+    content: "Heat a dry tawa on medium-high, no oil, no toppings. Cook first side until bubbles form (about 1 min). Flip, cook second side until about 70% set — not fully browned.",
+    timerSeconds: 90
+  }, {
+    title: "Stage 2: top and finish",
+    content: "Remove from heat. Spread sauce, add cheese and toppings on the mostly-cooked side. Return to tawa, cover with a lid, heat lowered to medium-low. Cook until cheese melts and base finishes cooking through, 3-4 min.",
+    timerSeconds: 210
+  }, {
+    title: "Serve",
+    content: "Slide off, slice, and serve hot.",
+    timerSeconds: null
+  }],
+  notes: [{
+    label: "Why two-stage cooking",
+    text: "Toppings insulate the top, so heat can't fully finish the base from above once loaded. Pre-cooking the base mostly through before topping, then finishing covered, guarantees the middle isn't raw or gummy."
+  }, {
+    label: "Don't overload toppings",
+    text: "Since the base is roti-thin, too much sauce or wet toppings (fresh tomato, extra sauce) makes it soggy before it crisps. Go light — this isn't deep-dish."
+  }, {
+    label: "If going thicker",
+    text: "For a base noticeably thicker than roti, add 1 egg to the dough. At 50% jowar (no gluten), egg gives backup structure so a thick center doesn't stay gummy — same principle as the jaggery muffins."
+  }, {
+    label: "Greek yogurt note",
+    text: "Greek yogurt is thicker than regular dahi. If the dough feels stiff or tears when pressed, it's under-hydrated — add a splash of milk, not more yogurt."
+  }]
+}, {
   id: "meal-one-pot-mexican-rice",
   category: "meals",
   title: "One Pot Mexican Rice (High Protein)",
@@ -8748,6 +8842,80 @@ const DEFAULT_RECIPES = [{
   }, {
     label: "Marinara shortcut",
     text: "2-3 tbsp store-bought marinara stirred in after blending gives the familiar pizza sauce taste without making it from scratch. The paneer mellows the acidity."
+  }]
+}, {
+  id: "sauce-quick-5min-pizza",
+  category: "sauces",
+  title: "Quick 5-Minute Pizza Sauce",
+  description: "No roasting, no fuss — canned tomatoes and pantry seasoning for days you need pizza sauce fast. Healthier than jarred (no added sugar, no preservatives).",
+  baseServings: 8,
+  calories: "~18 cal/serving",
+  totalTime: 5,
+  macros: {
+    protein: "0.6g",
+    carbs: "3.2g",
+    fat: "0.7g"
+  },
+  microHighlights: ["Vitamin C"],
+  tags: ["healthy", "quick", "pizza", "no-cook"],
+  ingredients: [{
+    name: "Canned crushed tomatoes (or tomato puree)",
+    amount: 1,
+    unit: "cup"
+  }, {
+    name: "Garlic powder",
+    amount: 0.5,
+    unit: "tsp"
+  }, {
+    name: "Onion powder",
+    amount: 0.25,
+    unit: "tsp"
+  }, {
+    name: "Dried oregano",
+    amount: 0.5,
+    unit: "tsp"
+  }, {
+    name: "Dried basil",
+    amount: 0.5,
+    unit: "tsp"
+  }, {
+    name: "Olive oil",
+    amount: 1,
+    unit: "tsp"
+  }, {
+    name: "Salt",
+    amount: 0.25,
+    unit: "tsp"
+  }, {
+    name: "Black pepper",
+    amount: 0.125,
+    unit: "tsp"
+  }, {
+    name: "Sugar or honey (optional, to cut acidity)",
+    amount: 0.5,
+    unit: "tsp"
+  }],
+  steps: [{
+    title: "Mix",
+    content: "Whisk all ingredients together in a bowl until combined. That's it — no cooking required if your canned tomatoes are good quality.",
+    timerSeconds: null
+  }, {
+    title: "Optional: quick simmer",
+    content: "For a deeper, more melded flavor, simmer in a small pan on medium-low for 3-4 min instead of just mixing. Stir occasionally.",
+    timerSeconds: 210
+  }],
+  notes: [{
+    label: "No-cook works",
+    text: "Good quality canned crushed tomatoes are already cooked during canning — mixing raw is genuinely fine for a quick weeknight pizza. The quick simmer just deepens flavor if you have the extra 3-4 min."
+  }, {
+    label: "Cutting acidity",
+    text: "Canned tomatoes can taste sharp. A scant 1/2 tsp sugar or honey rounds it out without making it sweet — standard trick, not a health compromise at this amount."
+  }, {
+    label: "Storage",
+    text: "Keeps 5-7 days refrigerated in an airtight jar. Freezes well in ice cube portions for 2-3 months."
+  }, {
+    label: "Upgrade options",
+    text: "Stir in 1 tbsp of your High-Protein Roasted Pizza Sauce or Paneer-Cashew Mayo if you have leftovers — boosts protein and creaminess without extra time."
   }]
 }, {
   id: "mango-chia",
